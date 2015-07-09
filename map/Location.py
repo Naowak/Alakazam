@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class Location :
 
 	""" Coordonnées utilisées pour accéder aux Cells"""
@@ -6,7 +8,7 @@ class Location :
 		self._x = x
 		self._y = y
 
-	def getAbcsisse(self) :
+	def getAbscisse(self) :
 		return self._x
 
 	def getOrdonnee(self) :
@@ -19,10 +21,10 @@ class Location :
 		self._y = y
 
 	def equals(self, loc) :
-		return self.getAbcsisse() == loc.getAbcsisse() and self.getOrdonnee() == loc.getOrdonnee()
+		return self.getAbscisse() == loc.getAbscisse() and self.getOrdonnee() == loc.getOrdonnee()
 
 	def clone(self) :
-		return Location(self.getAbcsisse(), self.getOrdonnee())
+		return Location(self.getAbscisse(), self.getOrdonnee())
 
 	def __str__(self) :
 		return '[' + str(self._x) + " : " + str(self._y) + ']'
