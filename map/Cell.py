@@ -48,3 +48,15 @@ class Cell :
         
     def __str__(self):
         return str(self._type) + " : " + str(self._character)
+        
+    def setEmpty(self):
+        self._type=1
+    
+    def setTaken(self):
+        self._type=2
+    
+    def setFull(self):
+        self._type=3
+    
+    def setHole(self):
+        self._type=4
