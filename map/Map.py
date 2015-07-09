@@ -96,16 +96,10 @@ class Map:
             
     
     def __str__(self):
-        str =""
+        s =""
         for i in range(self.getTailleX()):
             for j in range(self.getTailleY()):
-                str += str(self.getCell(Location(i,j)).getType()) + " "
-            str += "\n"
-        return S
+                s += str(self.getCell(Location(i,j)).getType()) + " "
+            s += "\n"
+        return s
 
-        str = ""
-        for j in range(MAP_SIDE_Y) :
-            for i in range(MAP_SIDE_X) :
-                str += self._tab[j][i].__str__()
-            str += "\n"
-        return str
