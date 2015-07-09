@@ -97,9 +97,10 @@ class Map:
     
     def __str__(self):
         s =""
-        for i in range(self.getTailleX()):
-            for j in range(self.getTailleY()):
-                s += str(self.getCell(Location(i,j)).getType()) + " "
+        for j in range(self.getTailleY()):
+            for i in range(self.getTailleX()):
+                s += str(self.getCell(Location(i,j)).getType())
+                s += " "
             s += "\n"
         return s
 
