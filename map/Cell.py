@@ -17,7 +17,7 @@ class Cell :
         if nb>0 and nb<5:
             self._type=nb
         else:
-            print("entre 1&4")
+            raise Exception("nb must be between 1 and 4 include")
             
     def setCharacter(self, Character):
         self._character=Character
