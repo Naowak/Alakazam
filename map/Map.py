@@ -29,15 +29,15 @@ class Map:
         
         
     def getCell(self, Loc):#
-        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
-            raise Exception("Coordonnee hors map")
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
             
         return self._list[Loc.getAbscisse()][Loc.getOrdonnee()]
     
     
     def setCellType(self, Loc, strType):#
-        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
-            raise Exception("Coordonnee hors map")
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
         
         if strType=="Empty":
             self._list[Loc.getAbscisse()][Loc.getOrdonnee()].setEmpty()
@@ -52,8 +52,8 @@ class Map:
             
     
     def getCellType(self, Loc):#
-        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
-            raise Exception("Coordonnee hors map")
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
         
         if self.getCell(Loc).getType()==1:
             return "Empty"
@@ -66,22 +66,22 @@ class Map:
     
     
     def setCellCharacter(self, Loc, Char):#
-        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
-            raise Exception("Coordonnee hors map")
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
         
         self.getCell(Loc).setCharacter(Char)
     
     
     def getCellCharacter(self, Loc):#
-        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
-            raise Exception("Coordonnee hors map")
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
         
         return self.getCell(Loc).getCharacter()
     
     
     def isCellType(self, Loc, strType):#
-        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
-            raise Exception("Coordonnee hors map")
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
         
         if strType=="Empty":
             return self._list[Loc.getAbscisse()][Loc.getOrdonnee()].isEmpty()
@@ -104,3 +104,29 @@ class Map:
             s += "\n"
         return s
 
+    def isOut(self,Loc):#
+        if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
+            return True
+        else:
+            return False
+
+
+    def getUpLeft(self, Loc):
+        if self.isOut(Loc):
+            raise Exception("Location out of map")
+        
+        Loc2=Location(Loc.getAbscisse()-1 if Loc.getAbscisse()%2==0 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+        if self.isOut(Loc2):
+            return None
+        else:
+            return Loc2
+												
+	def getUpRight(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+        
+        Loc2=Location(Loc.getAbscisse()+1 if Loc.getAbscisse()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+        if self.isOut(Loc2):
+            return None
+        else:
+            return Loc2
