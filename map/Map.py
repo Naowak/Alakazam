@@ -120,12 +120,12 @@ class Map:
             return None
         else:
             return Loc2
-												
-	def getUpRight(self, Loc):
-		if self.isOut(Loc):
-			raise Exception("Location out of map")
+            
+    def getUpRight(self, Loc):
+    	if self.isOut(Loc):
+    		raise Exception("Location out of map")
         
-        Loc2=Location(Loc.getAbscisse()+1 if Loc.getAbscisse()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+        Loc2 = Location(Loc.getAbscisse()+1 if Loc.getAbscisse()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
         if self.isOut(Loc2):
             return None
         else:
