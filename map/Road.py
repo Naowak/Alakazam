@@ -7,12 +7,12 @@ class Road :
 
 	def __init__(self, tailleX, tailleY) :
 		self._list = list()
-        for k in range(tailleX) :
-            self._list.append(list())
-            for i in range(tailleY) :
-                self._list[k].append(None)
-        self._tailleX=tailleX
-        self._tailleY=tailleY
+        	for k in range(tailleX) :
+            		self._list.append(list())
+            		for i in range(tailleY) :
+                		self._list[k].append(None)
+        	self._tailleX=tailleX
+        	self._tailleY=tailleY
 
 	def getCellPoids(self, Loc) :
 		if self._list[Loc.getAbscisse()][Loc.getOrdonnee()] is None :
