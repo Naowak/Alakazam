@@ -21,6 +21,8 @@ class Road :
 		return self._tailleY
 
 	def isOut(self, Loc) :
+		if not isinstance(Loc, Location) :
+			raise Exception("Loc isn't a Location")
 		return Loc.getAbscisse() >= self.getTailleX() or Loc.getOrdonnee() >= self.getTailleY() or Loc.getAbscisse() < 0 or Loc.getOrdonnee()< 0
 
 	def getCellPoids(self, Loc) :
