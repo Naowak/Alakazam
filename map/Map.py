@@ -108,7 +108,7 @@ class Map:
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
 		
-		Loc2=Location(Loc.getAbscisse()-1 if Loc.getAbscisse()%2==0 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+		Loc2=Location(Loc.getAbscisse()-1 if Loc.getOrdonnee()%2==0 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
 		if self.isOut(Loc2):
 			return None
 		else:
@@ -118,7 +118,7 @@ class Map:
 	def getUpRight(self, Loc):
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
-		Loc2 = Location(Loc.getAbscisse()+1 if Loc.getAbscisse()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+		Loc2 = Location(Loc.getAbscisse()+1 if Loc.getOrdonnee()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
 		if self.isOut(Loc2):
 			return None
 		else:
@@ -129,7 +129,38 @@ class Map:
 			raise Exception("Location out of map")
 		
 		Loc2 = Location(Loc.getAbscisse()+1,Loc.getOrdonnee())
-		if self.isout(Loc2):
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+	
+	def getLeft(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2 = Location(Loc.getAbscisse()-1,Loc.getOrdonnee())
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+			
+		
+	def getDownLeft(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2=Location(Loc.getAbscisse()-1 if Loc.getOrdonnee()%2==0 else Loc.getAbscisse(),Loc.getOrdonnee()+1)
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+	
+	def getDownRight(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2=Location(Loc.getAbscisse() if Loc.getOrdonnee()%2==0 else Loc.getAbscisse()+1,Loc.getOrdonnee()+1)
+		if self.isOut(Loc2):
 			return None
 		else:
 			return Loc2
