@@ -123,7 +123,7 @@ class Map:
             
     def getUpRight(self, Loc):
     	if self.isOut(Loc):
-    		raise Exception("Location out of map")
+    	    raise Exception("Location out of map")
         
         Loc2 = Location(Loc.getAbscisse()+1 if Loc.getAbscisse()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
         if self.isOut(Loc2):
