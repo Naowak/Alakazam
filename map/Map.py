@@ -29,7 +29,14 @@ class Map:
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
 		return self._list[Loc.getAbscisse()][Loc.getOrdonnee()]
-	
+
+	def setCell(self, C, Loc) :
+		if not isinstance(C, Cell) :
+			raise Exception("C isn't a Cell")
+		if self.isOut(Loc) :
+			raise Exception("Loc is out of Map")
+
+		self._list[Loc.getAbscisse()][Loc.getOrdonnee()] = C
 	
 	def setCellType(self, Loc, strType):#
 		if self.isOut(Loc):
@@ -89,6 +96,15 @@ class Map:
 			for j in range(self._tailleY) :
 				M._list[i][j] = self.getCell(Location(i,j)).clone()
 
+	def switchCell(self, Loc, Loc2) :
+		if self.isOut(Loc) or self.isOut(Loc2) :
+			raise Exception("Location out of Map")
+
+		C = self.getCell(Loc)
+		self.setCell(self.getCell(Loc2), Loc)
+		self.setCell(C, Loc2)
+
+
 	def __str__(self):
 		s =""
 		for j in range(self.getTailleY()):
@@ -99,6 +115,9 @@ class Map:
 		return s
 	
 	def isOut(self,Loc):#
+		if not isinstance(Loc, Location) :
+			raise Exception("Loc isn't a Location")
+
 		if Loc.getAbscisse() >= self.getTailleX() or Loc.getAbscisse() < 0 or Loc.getOrdonnee() >= self.getTailleY() or Loc.getOrdonnee() < 0 :
 			return True
 		else:
