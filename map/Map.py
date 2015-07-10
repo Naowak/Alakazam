@@ -104,6 +104,12 @@ class Map:
 		self.setCell(self.getCell(Loc2), Loc)
 		self.setCell(C, Loc2)
 
+	def areCellsEquals(self, Loc, Loc2) :
+		if self.isOut(Loc) or self.isOut(Loc2) :
+			raise Exception("Loc out of Map")
+
+		return Loc.equals(Loc2)
+
 
 	def __str__(self):
 		s =""
