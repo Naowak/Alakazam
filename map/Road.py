@@ -51,6 +51,21 @@ class Road :
 				raise Exception("Un élément de la liste n'est pas une Location")
 		self._list[Loc.getAbscisse()][Loc.getOrdonnee()] = road
 
+	def initializeRoadCellToNone (self, Loc) :
+		if self.isOut(Loc) :
+			raise Exception("Location out of the Map")
+		self._list[Loc.getAbscisse()][Loc.getOrdonnee()] = None
+
+	def initializeRoadAllCells(self) :
+		for i in range(self.getTailleX()) :
+			for j in range(self.getTailleY()) :
+				self.initializeRoadCellToNone(Location(i,j))
+
+	def findRoadForCells(self, max, LocD) :
+		if self.isOut(LocD) :
+			raise Exception("Location out of the Map")
+
+
 
 
     
