@@ -67,6 +67,8 @@ class Map:
 	def setCellCharacter(self, Loc, Char):#
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
+		if not isinstance(Char, Character) :
+			raise Exception("Char isn't a Character")
 		self.getCell(Loc).setCharacter(Char)
 	
 	def getCellCharacter(self, Loc):#
@@ -91,22 +93,26 @@ class Map:
 			raise Exception("strType non compris")
 
 	def clone(self) :
-		M = Map()
-		for i in range(self._tailleX) :
-			for j in range(self._tailleY) :
-				M._list[i][j] = self.getCell(Location(i,j)).clone()
+		M = Map(self.getTailleX, self.getTailleY)
+		for i in range(self.getTailleX) :
+			for j in range(self.getTailleY) :
+				M.setCell(self.getCell(Location(i,j)).clone(), Location(i,j))
 
 	def switchCell(self, Loc, Loc2) :
-		if self.isOut(Loc) or self.isOut(Loc2) :
-			raise Exception("Location out of Map")
+		if self.isOut(Loc) :
+			raise Exception("Loc out of Map")
+		if self.isOut(Loc2) :
+			raise Exception("Loc2 out of Map")
 
 		C = self.getCell(Loc)
 		self.setCell(self.getCell(Loc2), Loc)
 		self.setCell(C, Loc2)
 
 	def areCellsEquals(self, Loc, Loc2) :
-		if self.isOut(Loc) or self.isOut(Loc2) :
+		if self.isOut(Loc) :
 			raise Exception("Loc out of Map")
+		if self.isOut(Loc2) :
+			raise Exception("Loc2 out of Map")
 
 		return Loc.equals(Loc2)
 
@@ -143,6 +149,7 @@ class Map:
 	def getUpRight(self, Loc):
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
+			
 		Loc2 = Location(Loc.getAbscisse()+1 if Loc.getOrdonnee()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
 		if self.isOut(Loc2):
 			return None

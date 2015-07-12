@@ -19,8 +19,10 @@ class Cell :
         else:
             raise Exception("nb must be between 1 and 4 include")
             
-    def setCharacter(self, Character):
-        self._character=Character
+    def setCharacter(self, C):
+        #if not isinstance(C, Character) :
+        #    raise Exception("C isn't a Character")
+        self._character=C
         
     def getType(self):
         return self._type
@@ -30,8 +32,8 @@ class Cell :
     
     def clone(self):
         NewCell=Cell()
-        NewCell.setType(self._type)
-        #NewCell.setCharacter(self._character.clone())
+        NewCell.setType(self.getType())
+        #NewCell.setCharacter(self.getCharacter().clone())
         return NewCell
         
     def isEmpty(self):
@@ -47,7 +49,7 @@ class Cell :
         return self._type==4
         
     def __str__(self):
-        return str(self._type) + " : " + str(self._character)
+        return str(self.getType()) + " : " + str(self.getCharacter())
         
     def setEmpty(self):
         self._type=1
