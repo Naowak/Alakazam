@@ -177,7 +177,10 @@ class Road :
 			Loc = F.getValeur()
 			F.defiler()
 
-
-
-
-
+	def getListeCellsLocationWithRoads(self) :
+		L = list()
+		for i in range(self.getTailleX()) :
+			for j in range(self.getTailleY()) :
+				if self.getCellPoids(Location(i,j)) != 0 :
+					L += [Location(i,j)]
+		return L
