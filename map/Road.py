@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.append("../tools")
+
 from Location import *
+from File import *
 
 class Road :
 	"""Class which calcul the way to use to move a Character on the map"""
@@ -24,6 +28,99 @@ class Road :
 		if not isinstance(Loc, Location) :
 			raise Exception("Loc isn't a Location")
 		return Loc.getAbscisse() >= self.getTailleX() or Loc.getOrdonnee() >= self.getTailleY() or Loc.getAbscisse() < 0 or Loc.getOrdonnee()< 0
+
+	def getUpLeft(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2=Location(Loc.getAbscisse()-1 if Loc.getOrdonnee()%2==0 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+            
+
+	def getUpRight(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		Loc2 = Location(Loc.getAbscisse()+1 if Loc.getOrdonnee()%2==1 else Loc.getAbscisse(),Loc.getOrdonnee()-1)
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+
+	def getRight(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2 = Location(Loc.getAbscisse()+1,Loc.getOrdonnee())
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+	
+	def getLeft(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2 = Location(Loc.getAbscisse()-1,Loc.getOrdonnee())
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+			
+		
+	def getDownLeft(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2=Location(Loc.getAbscisse()-1 if Loc.getOrdonnee()%2==0 else Loc.getAbscisse(),Loc.getOrdonnee()+1)
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+	
+	def getDownRight(self, Loc):
+		if self.isOut(Loc):
+			raise Exception("Location out of map")
+		
+		Loc2=Location(Loc.getAbscisse() if Loc.getOrdonnee()%2==0 else Loc.getAbscisse()+1,Loc.getOrdonnee()+1)
+		if self.isOut(Loc2):
+			return None
+		else:
+			return Loc2
+
+	def getCellListeVoisins(self, Loc) :
+		if self.isOut(Loc) :
+			raise Exception("Location out of Map")
+
+		L = list()
+
+		gUR = self.getUpRight(Loc)
+		if gUR != None :
+			L += [gUR]
+
+		gR = self.getRight(Loc)
+		if gR != None :
+			L += [gR]
+
+		gDR = self.getDownRight(Loc)
+		if gDR != None :
+			L += [gDR]
+
+		gDL = self.getDownLeft(Loc)
+		if gDL != None :
+			L += [gDL]
+
+		gL = self.getLeft(Loc)
+		if gL != None :
+			L += [gL]
+
+		gUL = self.getUpLeft(Loc)
+		if gUL != None :
+			L += [gUL]
+
+		return L
 
 	def getCellPoids(self, Loc) :
 		if self.isOut(Loc) :
@@ -61,11 +158,26 @@ class Road :
 			for j in range(self.getTailleY()) :
 				self.initializeRoadCellToNone(Location(i,j))
 
-	def findRoadForCells(self, max, LocD) :
-		if self.isOut(LocD) :
+	def findRoadsForCells(self, max, Loc) :
+		if self.isOut(Loc) :
 			raise Exception("Location out of the Map")
+		if not isinstance(max, int) :
+			raise Exception("Max n'est pas un int")
+
+		self.initializeRoadAllCells()
+		self.setCellRoad(Loc, [Loc])
+		F = File()
+		F.enfiler(Loc)
+
+		while self.getCellPoids(Loc) < max + 1 and not F.fileVide() :
+			for Loc2 in self.getCellListeVoisins(Loc) :
+				if self.getCellPoids(Loc2) > self.getCellPoids(Loc) + 1 or self.getCellPoids(Loc2) == 0 :
+					self.setCellRoad(Loc2, self.getCellRoad(Loc) + [Loc2])
+					F.enfiler(Loc2)
+			Loc = F.getValeur()
+			F.defiler()
 
 
 
 
-    
+
