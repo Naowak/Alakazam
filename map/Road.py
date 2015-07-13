@@ -5,6 +5,7 @@ sys.path.append("../tools")
 
 from Location import *
 from File import *
+from Map import *
 
 class Road :
 	"""Class which calcul the way to use to move a Character on the map"""
@@ -90,34 +91,36 @@ class Road :
 		else:
 			return Loc2
 
-	def getCellListeVoisins(self, Loc) :
+	def getCellListeVoisins(self, Loc, M) :
 		if self.isOut(Loc) :
 			raise Exception("Location out of Map")
+		if not isinstance(M, Map) :
+			raise Exception("Map isn't a Map")
 
 		L = list()
 
 		gUR = self.getUpRight(Loc)
-		if gUR != None :
+		if gUR != None and M.getCellType(gUR) == "Empty" :
 			L += [gUR]
 
 		gR = self.getRight(Loc)
-		if gR != None :
+		if gR != None and M.getCellType(gR) == "Empty" :
 			L += [gR]
 
 		gDR = self.getDownRight(Loc)
-		if gDR != None :
+		if gDR != None and M.getCellType(gDR) == "Empty" :
 			L += [gDR]
 
 		gDL = self.getDownLeft(Loc)
-		if gDL != None :
+		if gDL != None and M.getCellType(gDL) == "Empty" :
 			L += [gDL]
 
 		gL = self.getLeft(Loc)
-		if gL != None :
+		if gL != None and M.getCellType(gL) == "Empty" :
 			L += [gL]
 
 		gUL = self.getUpLeft(Loc)
-		if gUL != None :
+		if gUL != None and M.getCellType(gUL) == "Empty" :
 			L += [gUL]
 
 		return L
@@ -158,7 +161,7 @@ class Road :
 			for j in range(self.getTailleY()) :
 				self.initializeRoadCellToNone(Location(i,j))
 
-	def findRoadsForCells(self, max, Loc) :
+	def findRoadsForCells(self, max, Loc, M) :
 		if self.isOut(Loc) :
 			raise Exception("Location out of the Map")
 		if not isinstance(max, int) :
@@ -170,7 +173,7 @@ class Road :
 		F.enfiler(Loc)
 
 		while self.getCellPoids(Loc) < max + 1 and not F.fileVide() :
-			for Loc2 in self.getCellListeVoisins(Loc) :
+			for Loc2 in self.getCellListeVoisins(Loc, M) :
 				if self.getCellPoids(Loc2) > self.getCellPoids(Loc) + 1 or self.getCellPoids(Loc2) == 0 :
 					self.setCellRoad(Loc2, self.getCellRoad(Loc) + [Loc2])
 					F.enfiler(Loc2)
