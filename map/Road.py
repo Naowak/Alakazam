@@ -11,6 +11,11 @@ class Road :
 	"""Class which calcul the way to use to move a Character on the map"""
 
 	def __init__(self, tailleX, tailleY) :
+		if not isinstance(tailleX, int) :
+			raise Exception("tailleX is not an integer")
+		if not isinstance(tailleY, int) :
+			raise Exception("tailleY is not an integer")
+			
 		self._list = list()
 		for k in range(tailleX) :
 			self._list.append(list())
