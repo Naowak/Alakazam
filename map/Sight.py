@@ -122,17 +122,17 @@ class Sight :
 		s = ""
 		for j in range(self.getSizeY()) :
 			if j % 2 == 1 :
-				s += " "
+				s = s + " "
 			for i in range(self.getSizeX()) :
 				if i == Loc.getAbscisse() and j == Loc.getOrdonnee() :
-					s += "C "
+					s = s + "C "
 				elif M.getCellType(Location(i,j)) == "Taken" or M.getCellType(Location(i,j)) == "Full" :
-					s += "M "
+					s = s + "M "
 				elif self.getSightCell(Location(i,j)) == True :
-					s += "_ "
+					s = s + "_ "
 				else :
-					s += "  "
-			s += "\n"
+					s = s + "  "
+			s = s + "\n"
 		return s
 
 
