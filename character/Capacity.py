@@ -5,7 +5,7 @@ from Map import *
 class Capacity :
 	"""classe servant à définir les différents sort de chaque personnage"""
 	
-	def __init__(self, portee, fct, coolDown, manaCost, name, coolDownRest, lineOfSight ) :
+	def __init__(self, name, fct, portee, manaCost, coolDown, lineOfSight ) :
 		
 		if not isinstance(portee, int):
 			raise Exception ("portee must be an integer")
@@ -15,8 +15,6 @@ class Capacity :
 			raise Exception ("manaCost must be an integer")
 		if not isinstance(name, str):
 			raise Exception ("name must be a string")
-		if not isinstance(coolDownRest, int):
-			raise Exception ("coolDownRest must be an integer")
 		if not isinstance(lineOfSight, bool):
 			raise Exception ("lineOfSight must be a boolean")
 		if not callable(fct):
@@ -27,7 +25,7 @@ class Capacity :
 		self._coolDown=coolDown
 		self._manaCost=manaCost
 		self._name=name
-		self._coolDownRest=coolDownRest
+		self._coolDownRest=0
 		self._lineOfSight=lineOfSight
 
 
