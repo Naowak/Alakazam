@@ -24,7 +24,7 @@ class Effect :
 		
 		#type 1 - buff : Bonus/malus recu au lancement du sort pour un nombre de tours limite
 		#type 2 - timeEffect : effet active a chaque tour pendant un nombre de tours donne
-		#type 0 - boost : effet non debuffable
+		#type 0 - effet : non debuffable
 		
 		self._name=name
 		self._fct=fct
@@ -65,4 +65,6 @@ class Effect :
 			raise Exception ("Target must be a Character")
 		self.getListTurn().pop(0)
 		return self.getFct()(Thrower, Target)
-		
+	
+	def debuff(self):
+		pass
