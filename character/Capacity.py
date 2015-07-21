@@ -6,7 +6,7 @@ class Capacity :
 	"""classe servant à définir les différents sort de chaque personnage"""
 	
 	def __init__(self, name, fct, portee, manaCost, coolDown, lineOfSight ) :
-		
+		#A faire : ajout de la description de la Capacity
 		if not isinstance(portee, int):
 			raise Exception ("portee must be an integer")
 		if not isinstance(coolDown, int):
