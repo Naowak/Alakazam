@@ -1,4 +1,9 @@
+import sys
+sys.path.append("../tools")
+from File import *
+
 from Capacity import *
+from Map import *
 
 class Character :
 	"Class which define what a Character is, all different Character will inherite from this class"
@@ -22,9 +27,18 @@ class Character :
 		self._mouvementPoint = mouvementPoint
 		self._porteeBonusMalus = 0
 		self._capacityList = list()
-		self._listEffectBeginTurn = list()
-		self._listEffectEndTurn = list()
-		self._listEffectTakeDamage = list()
+		self._fileEffectBeginTurn = File()
+		self._fileEffectEndTurn = File()
+		self._fileEffectTakeDamage = File()
+
+	def __str__(self) :
+		s =  str(self.getName()) + ' = Vie : ' + str(self.getLifePoint()) + '/' + str(self.getLifePointMax()) + \
+		' ,  Mana : ' + str(self.getMana()) + '/' + str(self.getManaMax()) + ' , MP : ' + str(self.getMouvementPoint()) \
+		+ '/' + str(self.getMouvementPointMax()) + " , PO : " + str(self.getPorteeBonusMalus()) + ' , CapacityList :' 
+		for elem in self._capacityList :
+			s += elem.getName()
+			s += "   "
+		return s
 
 	def getName(self) :
 		return self._name
@@ -67,6 +81,9 @@ class Character :
 		if not isinstance(number, int) :
 			raise Exception("number isn't an int")
 		self.setLifePoint(self.getLifePoint() + number)
+
+	def isDead(self) :
+		return getLifePoint() == 0
 
 	def getManaMax(self) :
 		return self._manaMax
@@ -152,3 +169,38 @@ class Character :
 	def addCapacity(self, C) :
 		if not isinstance(C, Capacity) :
 			raise Exception("C isn't a Capacity")
+		self._capacityList.append(C)
+
+	def removeCapacity(self, name) :
+		if not isinstance(name, str) :
+			raise Exception("name isn't a str")
+		i = 0
+		for elem in self._capacityList :
+			if elem.getName() == name :
+				self._capacityList.pop(i)
+				return
+			i += 1
+
+	def useCapacity(self, name, Loc1, Loc2, M) :
+		if not isinstance(name, str) :
+			raise Exception("name isn't a str")
+		if not isinstance(M, Map) :
+			raise Exception("m isn't a Map")
+		if M.isOut(Loc1) :
+			raise Exception("Loc1 is out the Map")
+		if M.isOut(Loc2) :
+			raise Exception("Loc2 is out the Map")
+
+		i = 0
+		for elem in self._capacityList :
+			if elem.getName() == name :
+				if self.getMana() < elem.getManaCost() :
+					raise Exception("Doesn't have enought mana to do it !")
+				elem.use(Loc1, Loc2, M)
+				self.addMana(-1*elem.getManaCost())
+				return
+			i += 1
+
+
+
+

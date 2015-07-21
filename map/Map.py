@@ -4,8 +4,12 @@ Created on Thu Jul  9 17:12:50 2015
 
 @author: Gauthier
 """
+import sys
+sys.path.append("../character")
+
+from Character import *
 from Cell import *
-from  Location import *
+from Location import *
 
 class Map:
 	"Classe carte"
