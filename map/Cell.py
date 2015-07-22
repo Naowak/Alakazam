@@ -5,11 +5,6 @@ Created on Thu Jul  9 15:22:38 2015
 @author: Gauthier
 """
 
-import sys
-sys.path.append("../character")
-
-from Character import *
-
 class Cell :
     
     """Cellule composant la map"""
@@ -25,8 +20,6 @@ class Cell :
             raise Exception("nb must be between 1 and 4 include")
             
     def setCharacter(self, C):
-        if not isinstance(C, Character) :
-            raise Exception("C isn't a Character")
         self._character=C
         
     def getType(self):

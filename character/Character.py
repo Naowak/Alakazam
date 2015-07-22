@@ -1,9 +1,10 @@
 import sys
-sys.path.append("../tools")
-from File import *
+
+sys.path.append("../map")
+from Map import *
 
 from Capacity import *
-from Map import *
+from ListEffect import *
 
 class Character :
 	"Class which define what a Character is, all different Character will inherite from this class"
@@ -27,9 +28,10 @@ class Character :
 		self._mouvementPoint = mouvementPoint
 		self._porteeBonusMalus = 0
 		self._capacityList = list()
-		self._fileEffectBeginTurn = File()
-		self._fileEffectEndTurn = File()
-		self._fileEffectTakeDamage = File()
+		self._listEffectBeginTurn = ListEffect()
+		self._listEffectEndTurn = ListEffect()
+		self._listEffectTakeDamage = ListEffect()
+		self._location = None
 
 	def __str__(self) :
 		s =  str(self.getName()) + ' = Vie : ' + str(self.getLifePoint()) + '/' + str(self.getLifePointMax()) + \
@@ -200,7 +202,50 @@ class Character :
 				self.addMana(-1*elem.getManaCost())
 				return
 			i += 1
+		raise Exception("Character doesn't have that Capacity")
 
+	def setCharacterOnMap(self, Loc1, M) :
+		if not isinstance(M, Map) :
+			raise Exception("M isn't a map")
+		if not isinstance(Loc1, Location) :
+			raise Exception("Loc1 isn't a Location")
+		M.setCellCharacter(Loc1, self)
+		self._location = Loc1
 
+	def getLocation(self) :
+		return self._location
+
+	def setLocationToNone(self) :
+		self._location = None
+
+	def addEffectBeginTurn(self, Ef) :
+		if not isinstance(Ef, Effect) :
+			raise Exception("Ef isn't an Effect")
+		self._listEffectBeginTurn.addEffect(Ef)
+
+	def addEffectEndTurn(self, Ef) :
+		if not isinstance(Ef, Effect) :
+			raise Exception("Ef isn't an Effect")
+		self._listEffectEndTurn.addEffect(Ef)
+
+	def addEffectTakeDamage(self, Ef) :
+		if not isinstance(Ef, Effect) :
+			raise Exception("Ef isn't an Effect")
+		self._listEffectTakeDamage.addEffect(Ef)
+
+	def applyEffectBeginTurn(self, turn) :
+		if not isinstance(turn, int) :
+			raise Exception("turn isn't an integer")
+		self._listEffectBeginTurn.applyEffect(turn)
+
+	def applyEffectEndTurn(self, turn) :
+		if not isinstance(turn, int) :
+			raise Exception("turn isn't an integer")
+		self._listEffectEndTurn.applyEffect(turn)
+
+	def applyEffectTakeDamage(self, turn) :
+		if not isinstance(turn, int) :
+			raise Exception("turn isn't an integer")
+		self._listEffectTakeDamage.applyEffect(turn)
 
 

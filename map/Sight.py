@@ -113,12 +113,16 @@ class Sight :
 
 		for i in range(self.getSizeX()) :
 			for j in range(self.getSizeY()) :
-				for elem in self.drawLine(Loc, Location(i,j)) :
-					if M.getCellType(elem) == "Full" or M.getCellType(elem) == "Taken" :
+				k = 0
+				line = self.drawLine(Loc, Location(i,j))
+				kMax = len(line) - 1
+				for elem in line :
+					if M.getCellType(elem) == "Full" or (M.getCellType(elem) == "Taken" and k != 0 and k != kMax):
 						self.setSightCell(Location(i,j), False)
 						break
+					k += 1
 
-	def str(self, Loc, M) :
+	def string(self, Loc, M) :
 		s = ""
 		for j in range(self.getSizeY()) :
 			if j % 2 == 1 :

@@ -4,10 +4,7 @@ Created on Thu Jul  9 17:12:50 2015
 
 @author: Gauthier
 """
-import sys
-sys.path.append("../character")
 
-from Character import *
 from Cell import *
 from Location import *
 
@@ -76,9 +73,8 @@ class Map:
 	def setCellCharacter(self, Loc, Char):#
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
-		if not isinstance(Char, Character) :
-			raise Exception("Char isn't a Character")
 		self.getCell(Loc).setCharacter(Char)
+		self.setCellType(Loc, "Taken")
 	
 	def getCellCharacter(self, Loc):#
 		if self.isOut(Loc):
@@ -129,6 +125,8 @@ class Map:
 	def __str__(self):
 		s =""
 		for j in range(self.getTailleY()):
+			if j % 2 == 1 :
+				s += " "
 			for i in range(self.getTailleX()):
 				s += str(self.getCell(Location(i,j)).getType())
 				s += " "
