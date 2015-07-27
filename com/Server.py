@@ -22,6 +22,7 @@ class ClientThread(threading.Thread) :
 	def run(self) :
 		b = True
 		while(b) :
+			self.getClientSocket().send("Connected to Server".encode())
 			r = self.getClientSocket().recv(2048)
 			print(r)
 			r = cb.stringBinaryToList(r)
@@ -32,7 +33,7 @@ class ClientThread(threading.Thread) :
 				b = False
 			elif r[0] == 1 :
 				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort()))
-				self.getClientSocket().send('Waiting for an opponent')
+				self.getClientSocket().send('Waiting for an opponent'.encode())
 				b = False
 
 	def getWaitingList(self) :
