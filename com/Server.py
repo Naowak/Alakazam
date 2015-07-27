@@ -22,6 +22,7 @@ class ClientThread(threading.Thread) :
 	def run(self) :
 		b = True
 		while(b) :
+			self.getClientSocket().send("Connected to Server".encode())
 			r = self.getClientSocket().recv(2048)
 			print(r)
 			r = cb.stringBinaryToList(r)
