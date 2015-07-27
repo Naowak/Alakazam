@@ -32,6 +32,7 @@ class ClientThread(threading.Thread) :
 				b = False
 			elif r[0] == 1 :
 				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort()))
+				self.getClientSocket().send('Waiting for an opponent')
 				b = False
 
 	def getWaitingList(self) :
