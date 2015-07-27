@@ -28,11 +28,12 @@ class ClientThread(threading.Thread) :
 			print(r)
 			if r[0] == 0 :
 				print("Client déconnecté :" + str(self.getIP())+ " " + str(self.getPort()))
+				self.getClientSocket().send("0 0".encode())
 				self.getClientSocket().close()
 				b = False
 			elif r[0] == 1 :
 				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort()))
-				self.getClientSocket().send('Waiting for an opponent')
+				self.getClientSocket().send('Waiting for an opponent'.encode())
 				b = False
 
 	def getWaitingList(self) :
@@ -136,12 +137,16 @@ class ThreadForPlayer(threading.Thread) :
 		b = True
 		while(b) :
 			r = self.getPlayer().getReferenceSocket().recv(2048)
-			if(r.decode() == 0) :
+			if(r.decode() == '0') :
 				b = False
 				newthread = ClientThread(self.getPlayer().getIP(), self.getPlayer().getPort(), self.getPlayer().getReferenceSocket(), self.getWaitingList())
 				newthread.start()
-			for player in self.getTabPlayer() :
-				player.getReferenceSocket().send(r)
+				for player in self.getTabPlayer() :
+					if player != self.getPlayer() :
+						player.getReferenceSocket().send("Oh, votre adversaire est parti ! ...".encode())
+			else :
+				for player in self.getTabPlayer() :
+					player.getReferenceSocket().send(r)
 
 tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

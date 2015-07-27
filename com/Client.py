@@ -39,9 +39,10 @@ class ClientThreadReception(threading.Thread) :
 		while(self.getContinue()) :
 
 			mess = self.getConnection().recv(2048).decode()
-			if(mess == '0') :
+			if(mess == '0 0') :
 				self.setContinue(False)
 				self.getThreadSendind().setContinue(False)
+				print("Deconnexion...")
 			else :
 				print(mess)
 
@@ -85,9 +86,9 @@ class ClientThreadSending(threading.Thread) :
 	def run(self) :
 		while(self.getContinue()) :
 			mess = demandeTexteToBinary()
-			if(mess.decode() == '0') :
-				self.getThreadReception().setContinue(False)
-				self.setContinue(False)
+			#if(mess.decode() == '0') :
+			#	self.getThreadReception().setContinue(False)
+			#	self.setContinue(False)
 			sendRequest(self._connection, mess)
 
 
