@@ -71,10 +71,10 @@ class ListThread(threading.Thread) :
 			if self.tailleList() >= 2 :
 				player1 = self.getList().pop(0)
 				player2 = self.getList().pop(0)
-				b = Battle(player1, player2, self)
+				b = Room(player1, player2, self)
 				b.start()
 
-class Battle(threading.Thread) :
+class Room(threading.Thread) :
 
 	def __init__(self, player1, player2, WaitingList) :
 		threading.Thread.__init__(self)

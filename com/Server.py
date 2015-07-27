@@ -1,5 +1,5 @@
 import socket
-from classServer import *
+from ClassServer import *
 
 IP = ""
 PORT = 10000
