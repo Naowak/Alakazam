@@ -4,7 +4,7 @@ import sys
 sys.path.append("../tools/")
 import convertBinary as cb
 import File
-from Battle import *
+from Player import *
 
 IP = ""
 PORT = 10000
@@ -20,19 +20,21 @@ class ClientThread(threading.Thread) :
 		print("[+] Nouveau thread pour %s %s" % (self.getIP(), self.getPort(), ))
 
 	def run(self) :
-		while(1) :
+		b = True
+		while(b) :
 			r = self.getClientSocket().recv(2048)
 			print(r)
 			r = cb.stringBinaryToList(r)
 			print(r)
 			if r[0] == 0 :
 				print("Client déconnecté :" + str(self.getIP())+ " " + str(self.getPort()))
-				break
-			if r[0] == 1 :
-				self.getWaintingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort()))
-				break
+				self.getClientSocket().close()
+				b = False
+			elif r[0] == 1 :
+				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort()))
+				b = False
 
-	def getWaintingList(self) :
+	def getWaitingList(self) :
 		return self._waitingList				
 
 	def getIP(self) :
@@ -69,8 +71,76 @@ class ListThread(threading.Thread) :
 			if self.tailleList() >= 2 :
 				player1 = self.getList().pop(0)
 				player2 = self.getList().pop(0)
-				b = Battle(player1, player2)
+				b = Battle(player1, player2, self)
 				b.start()
+
+class Battle(threading.Thread) :
+
+	def __init__(self, player1, player2, WaitingList) :
+		threading.Thread.__init__(self)
+		if not isinstance(player1, Player) :
+			raise Exception("player1 isn't a Player")
+		if not isinstance(player2, Player) :
+			raise Exception("player2 isn't a Player")
+		if not isinstance(WaitingList, ListThread) :
+			raise Exception("WaitingList isn't a ListThread")
+
+		self._player1 = player1
+		self._player2 = player2
+		self._waitingList = WaitingList
+
+	def getPlayer1(self) :
+		return self._player1
+
+	def getPlayer2(self) :
+		return self._player2
+
+	def getWaitingList(self) :
+		return self._waitingList
+
+	def run(self) :
+		self.getPlayer1().getReferenceSocket().send("Joueur 1.".encode())
+		self.getPlayer2().getReferenceSocket().send("Joueur 2.".encode())
+		tab = [self.getPlayer1(), self.getPlayer2()]
+		t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList())
+		t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList())
+		t1.start()
+		t2.start()
+
+
+class ThreadForPlayer(threading.Thread) :
+
+	def __init__(self, P, tabPlayer, WaitingList) :
+		threading.Thread.__init__(self)
+		if not isinstance(tabPlayer, list) :
+			raise Exception("tabPlayer isn't a list")
+		if not isinstance(P, Player) :
+			raise Exception("P isn't a Player")
+		if not isinstance(WaitingList, ListThread) :
+			raise Exception("WaitingList isn't a ListThread")
+		self._tabPlayer = tabPlayer
+		self._Player = P
+		self._waitingList = WaitingList
+
+	def getTabPlayer(self) :
+		return self._tabPlayer
+
+	def getPlayer(self) :
+		return self._Player
+
+	def getWaitingList(self) :
+		return self._waitingList
+
+	def run(self) :
+		b = True
+		while(b) :
+			r = self.getPlayer().getReferenceSocket().recv(2048)
+			if(r.decode() == 0) :
+				b = False
+				newthread = ClientThread(self.getPlayer().getIP(), self.getPlayer().getPort(), self.getPlayer().getReferenceSocket(), self.getWaitingList())
+				newthread.start()
+			for player in self.getTabPlayer() :
+				player.getReferenceSocket().send(r)
 
 tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
