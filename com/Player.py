@@ -2,6 +2,9 @@ import socket
 import sys
 sys.path.append("../tools/")
 import convertBinary as cb
+from PlayerInBattle import *
+sys.path.append("../character/")
+from Team import *
 
 class Player :
 	"""define a Player"""
@@ -10,6 +13,7 @@ class Player :
 		self._referenceSocket = referenceSocket
 		self._ip = ip
 		self._port = port
+		self._playerInBattle
 
 	def getReferenceSocket(self) :
 		return self._referenceSocket
@@ -28,3 +32,16 @@ class Player :
 	def recvFromPlayer(self) :
 		mess = self.getReferenceSocket().recv(2048)
 		return mess.decode()
+
+	def initPlayerInBattle(self, team) :
+		if not isinstance(team Team) :
+			raise Exception("team isn't a Team Object")
+		self._playerInBattle = PlayerInBattle(self, team)
+
+	def getPlayerInBattle(self) :
+		return self._playerInBattle
+
+	def setPlayerInBattle(self, PIB) :
+		if not isinstance(PIB, PlayerInBattle) :
+			raise Exception("PIB isnt a PlayerInBattle")
+		self._playerInBattle = PIB
