@@ -13,7 +13,7 @@ class Player :
 		self._referenceSocket = referenceSocket
 		self._ip = ip
 		self._port = port
-		self._playerInBattle
+		self._playerInBattle = None
 
 	def getReferenceSocket(self) :
 		return self._referenceSocket
@@ -34,7 +34,7 @@ class Player :
 		return mess.decode()
 
 	def initPlayerInBattle(self, team) :
-		if not isinstance(team Team) :
+		if not isinstance(team, Team) :
 			raise Exception("team isn't a Team Object")
 		self._playerInBattle = PlayerInBattle(self, team)
 

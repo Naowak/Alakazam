@@ -1,4 +1,4 @@
-import Thread
+import threading
 from PlayerInBattle import *
 import sys
 sys.path.append("../map/")
@@ -10,6 +10,7 @@ TAILLE_MAP_Y = 30
 class Battle(threading.Thread) :
 
 	def __init__(self, playerInBattle1, playerInBattle2) :
+		threading.Thread.__init__(self)
 		if not isinstance(playerInBattle1, PlayerInBattle) :
 			raise Exception("playerInBattle1 isn't a PlayerInBattle")
 		if not isinstance(playerInBattle2, PlayerInBattle) :
