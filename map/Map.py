@@ -216,3 +216,22 @@ class Map:
 				elif r > 0.925 :
 					self.setCellType(Location(X,Y),'Hole')
 					self.setCellType(Location (self.getTailleX()-1-X, self.getTailleY()-1-Y), 'Hole')
+	
+	def CellsForChararacters(self):
+		"Apres creation du relief, renvoie deux listes de coordonnees pour que les joueurs puissent placer leurs characters"
+		L=[]
+		for X in range (self.getTailleX() ) :
+			for Y in range( self.getTailleY()//2 ) :
+				if self.isCellType(Location(X, Y), 'Empty'):
+					L+=[Location(X,Y)]
+		L1=[]
+		L2=[]
+		for k in range (7):
+			c= choice(L)
+			L.remove(c)
+			L1+=[c]
+			L2+=[Location(self.getTailleX()-1-c.getAbscisse(), self.getTailleY()-1-c.getOrdonnee())]
+			
+		return [L1,L2]
+			
+			
