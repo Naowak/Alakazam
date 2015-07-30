@@ -7,6 +7,7 @@ Created on Thu Jul  9 17:12:50 2015
 
 from Cell import *
 from Location import *
+from random import random, choice
 
 class Map:
 	"Classe carte"
@@ -24,6 +25,7 @@ class Map:
 				self._list[k].append(Cell())
 		self._tailleX=tailleX
 		self._tailleY=tailleY
+		
 	
 	def getTailleX(self):#
 		return self._tailleX
@@ -203,3 +205,14 @@ class Map:
 			return None
 		else:
 			return Loc2
+	
+	def generationRelief(self) :
+		for X in range( 1, self.getTailleX()-1 ) :
+			for Y in range(1, (self.getTailleY()-1) // 2 ) :
+				r = random()
+				if r < 0.075 :
+					self.setCellType(Location (X, Y), 'Full')
+					self.setCellType(Location (self.getTailleX()-1-X, self.getTailleY()-1-Y), 'Full')
+				elif r > 0.925 :
+					self.setCellType(Location(X,Y),'Hole')
+					self.setCellType(Location (self.getTailleX()-1-X, self.getTailleY()-1-Y), 'Hole')
