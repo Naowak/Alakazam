@@ -217,7 +217,7 @@ class Map:
 					self.setCellType(Location(X,Y),'Hole')
 					self.setCellType(Location (self.getTailleX()-1-X, self.getTailleY()-1-Y), 'Hole')
 	
-	def CellsForChararacters(self):
+	def CellsForCharacters(self):
 		"Apres creation du relief, renvoie deux listes de coordonnees pour que les joueurs puissent placer leurs characters"
 		L=[]
 		for X in range (self.getTailleX() ) :

@@ -5,6 +5,10 @@ sys.path.append("../tools/")
 import convertBinary as cb
 import File
 from Player import *
+from Decode import *
+sys.path.append("../map/")
+from Map import *
+
 
 class ClientThread(threading.Thread) :
 
@@ -30,7 +34,7 @@ class ClientThread(threading.Thread) :
 				self.getClientSocket().close()
 				b = False
 			elif r[0] == 1 :
-				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort()))
+				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort(), r[1:]))
 				self.getClientSocket().send('Waiting for an opponent'.encode())
 				b = False
 
@@ -87,6 +91,7 @@ class Room(threading.Thread) :
 
 		self._player1 = player1
 		self._player2 = player2
+		self._map = Map(30, 30)
 		self._waitingList = WaitingList
 
 	def getPlayer1(self) :
@@ -98,9 +103,30 @@ class Room(threading.Thread) :
 	def getWaitingList(self) :
 		return self._waitingList
 
+	def getMap(self) :
+		return self._map
+
+	def sendPlayer(self, nb, mess) :
+		if nb == 1 :
+			self.getPlayer1().getReferenceSocket().send(cb.listToStringBinary(mess))
+		elif nb == 2 :
+			self.getPlayer2().getReferenceSocket().send(cb.listToStringBinary(mess))
+		elif nb == 3 :
+			self.getPlayer1().getReferenceSocket().send(cb.listToStringBinary(mess))
+			self.getPlayer2().getReferenceSocket().send(cb.listToStringBinary(mess))
+
 	def run(self) :
 		self.getPlayer1().getReferenceSocket().send("Joueur 1.".encode())
 		self.getPlayer2().getReferenceSocket().send("Joueur 2.".encode())
+
+		textEncode = decodeTeamInit(self.getPlayer1(), self.getPlayer2())
+		self.sendPlayer(2, textEncode[0])
+		self.sendPlayer(1, textEncode[1])
+
+		self.getMap().generationRelief()
+		textEncode = encodeMap(self.getMap())
+		self.sendPlayer(3, textEncode)
+
 		tab = [self.getPlayer1(), self.getPlayer2()]
 		t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList())
 		t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList())

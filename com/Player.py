@@ -2,18 +2,19 @@ import socket
 import sys
 sys.path.append("../tools/")
 import convertBinary as cb
-from PlayerInBattle import *
 sys.path.append("../character/")
 from Team import *
 
 class Player :
 	"""define a Player"""
 
-	def __init__(self, referenceSocket, ip, port) :
+	def __init__(self, referenceSocket, ip, port, listToDecode) :
+		if not isinstance(listToDecode, list) :
+			raise Exception("listToDecode isn't a list Object")
 		self._referenceSocket = referenceSocket
 		self._ip = ip
 		self._port = port
-		self._playerInBattle = None
+		self._team = listToDecode
 
 	def getReferenceSocket(self) :
 		return self._referenceSocket
@@ -33,15 +34,10 @@ class Player :
 		mess = self.getReferenceSocket().recv(2048)
 		return mess.decode()
 
-	def initPlayerInBattle(self, team) :
+	def getTeam(self) :
+		return self._team
+
+	def setTeam(self, team) :
 		if not isinstance(team, Team) :
-			raise Exception("team isn't a Team Object")
-		self._playerInBattle = PlayerInBattle(self, team)
-
-	def getPlayerInBattle(self) :
-		return self._playerInBattle
-
-	def setPlayerInBattle(self, PIB) :
-		if not isinstance(PIB, PlayerInBattle) :
-			raise Exception("PIB isnt a PlayerInBattle")
-		self._playerInBattle = PIB
+			raise Exception("team ins't a Team Object")
+		self._team = team
