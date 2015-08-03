@@ -5,7 +5,7 @@ sys.path.append("../tools/")
 import convertBinary as cb
 import File
 from Player import *
-from Decode import *
+from DecodeEncodeServer import *
 sys.path.append("../map/")
 from Map import *
 
@@ -23,19 +23,19 @@ class ClientThread(threading.Thread) :
 	def run(self) :
 		b = True
 		while(b) :
-			self.getClientSocket().send("Connected to Server".encode())
+			#self.getClientSocket().send("Connected to Server".encode())
 			r = self.getClientSocket().recv(2048)
 			print(r)
 			r = cb.stringBinaryToList(r)
 			print(r)
 			if r[0] == 0 :
 				print("Client déconnecté :" + str(self.getIP())+ " " + str(self.getPort()))
-				self.getClientSocket().send("0 0".encode())
+				self.getClientSocket().send("0".encode())
 				self.getClientSocket().close()
 				b = False
 			elif r[0] == 1 :
 				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort(), r[1:]))
-				self.getClientSocket().send('Waiting for an opponent'.encode())
+				#self.getClientSocket().send('Waiting for an opponent'.encode())
 				b = False
 
 	def getWaitingList(self) :
@@ -116,11 +116,11 @@ class Room(threading.Thread) :
 			self.getPlayer2().getReferenceSocket().send(cb.listToStringBinary(mess))
 
 	def run(self) :
-		self.getPlayer1().getReferenceSocket().send("Joueur 1.".encode())
-		self.getPlayer2().getReferenceSocket().send("Joueur 2.".encode())
+		#self.getPlayer1().getReferenceSocket().send("Joueur 1.".encode())
+		#self.getPlayer2().getReferenceSocket().send("Joueur 2.".encode())
 
 		textEncode = decodeTeamInit(self.getPlayer1(), self.getPlayer2())
-		self.sendPlayer(2, textEncode[0])
+		self.sendPlayer(3, textEncode[0])
 		self.sendPlayer(1, textEncode[1])
 
 		self.getMap().generationRelief()
@@ -128,15 +128,15 @@ class Room(threading.Thread) :
 		self.sendPlayer(3, textEncode)
 
 		tab = [self.getPlayer1(), self.getPlayer2()]
-		t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList())
-		t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList())
+		t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList(), self)
+		t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList(), self)
 		t1.start()
 		t2.start()
 
 
 class ThreadForPlayer(threading.Thread) :
 
-	def __init__(self, P, tabPlayer, WaitingList) :
+	def __init__(self, P, tabPlayer, WaitingList, room) :
 		threading.Thread.__init__(self)
 		if not isinstance(tabPlayer, list) :
 			raise Exception("tabPlayer isn't a list")
@@ -147,6 +147,7 @@ class ThreadForPlayer(threading.Thread) :
 		self._tabPlayer = tabPlayer
 		self._Player = P
 		self._waitingList = WaitingList
+		self._room = room
 
 	def getTabPlayer(self) :
 		return self._tabPlayer
@@ -156,6 +157,9 @@ class ThreadForPlayer(threading.Thread) :
 
 	def getWaitingList(self) :
 		return self._waitingList
+
+	def getRoom(self) :
+		return self._room
 
 	def run(self) :
 		b = True
@@ -167,7 +171,8 @@ class ThreadForPlayer(threading.Thread) :
 				newthread.start()
 				for player in self.getTabPlayer() :
 					if player != self.getPlayer() :
-						player.getReferenceSocket().send("Oh, votre adversaire est parti ! ...".encode())
+						#player.getReferenceSocket().send("Oh, votre adversaire est parti ! ...".encode())
+						pass
 			else :
 				for player in self.getTabPlayer() :
 					player.getReferenceSocket().send(r)

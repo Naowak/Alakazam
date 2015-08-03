@@ -1,5 +1,10 @@
 import socket
 import threading
+import sys
+sys.path.append("../tools/")
+import convertBinary as cb
+sys.path.append("../map/")
+from MapClient import *
 
 IP = ""
 PORT = 10000
@@ -38,11 +43,15 @@ class ClientThreadReception(threading.Thread) :
 	def run(self) :
 		while(self.getContinue()) :
 
-			mess = self.getConnection().recv(2048).decode()
-			if(mess == '0 0') :
+			mess = self.getConnection().recv(2048)
+			mess = cb.stringBinaryToList(mess)
+			if(mess[0] == 0) :
 				self.setContinue(False)
 				self.getThreadSendind().setContinue(False)
 				print("Deconnexion...")
+			if(mess[0] == 2) :
+				M = MapClient(mess[1:])
+				print(M)
 			else :
 				print(mess)
 
@@ -113,7 +122,8 @@ s = connectionToServer()
 ThreadSending = ClientThreadSending(IP, PORT, s)
 ThreadReception = ClientThreadReception(IP, PORT, s, ThreadSending)
 
-
 ThreadReception.start()
 ThreadSending.start()
+
+
 
