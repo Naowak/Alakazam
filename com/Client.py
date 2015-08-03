@@ -5,6 +5,8 @@ sys.path.append("../tools/")
 import convertBinary as cb
 sys.path.append("../map/")
 from MapClient import *
+from EncodeDecodeClient import *
+from PlayerClient import *
 
 IP = ""
 PORT = 10000
@@ -49,9 +51,21 @@ class ClientThreadReception(threading.Thread) :
 				self.setContinue(False)
 				self.getThreadSendind().setContinue(False)
 				print("Deconnexion...")
-			if(mess[0] == 2) :
+			elif(mess[0] == 1) :
+				Player1 = PlayerClient()
+				Player2 = PlayerClient()
+			elif(mess[0] == 2) :
 				M = MapClient(mess[1:])
 				print(M)
+			elif(mess[0] == 3) :
+				if not Player1.getTeam() :
+					Player1.setTeam(decodeTeamInit(mess[1:]))
+					print(Player1.getTeam())
+				elif not Player2.getTeam() :
+					Player2.setTeam(decodeTeamInit(mess[1:]))
+					print(Player2.getTeam())
+				else :
+					raise Exception("Both player have already a Team")
 			else :
 				print(mess)
 

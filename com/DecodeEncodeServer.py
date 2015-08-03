@@ -4,8 +4,8 @@ sys.path.append("../map/")
 from Location import *
 
 def decodeTeamInit(player1, player2) :
-	code1 = player1.getTeam()
-	code2 = player2.getTeam()
+	code1 = [3] + player1.getTeam()
+	code2 = [3] + player2.getTeam()
 	for player in [player1, player2] :
 		if player.getTeam()[0] == 1 :
 			c1 = "NormalClass"

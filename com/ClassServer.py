@@ -118,10 +118,15 @@ class Room(threading.Thread) :
 	def run(self) :
 		#self.getPlayer1().getReferenceSocket().send("Joueur 1.".encode())
 		#self.getPlayer2().getReferenceSocket().send("Joueur 2.".encode())
+		self.sendPlayer(3, [1])
 
 		textEncode = decodeTeamInit(self.getPlayer1(), self.getPlayer2())
-		self.sendPlayer(3, textEncode[0])
+		if textEncode[0] == 666 :
+			raise Exception("An Error Occured for the Creation of teams")
+		self.sendPlayer(1, textEncode[0]) #On reçois d'abord son équipe puis celle de l'adv
 		self.sendPlayer(1, textEncode[1])
+		self.sendPlayer(2, textEncode[1])
+		self.sendPlayer(2, textEncode[0])
 
 		self.getMap().generationRelief()
 		textEncode = encodeMap(self.getMap())
