@@ -85,7 +85,7 @@ class Character :
 		self.setLifePoint(self.getLifePoint() + number)
 
 	def isDead(self) :
-		return getLifePoint() == 0
+		return self.getLifePoint() == 0
 
 	def getManaMax(self) :
 		return self._manaMax

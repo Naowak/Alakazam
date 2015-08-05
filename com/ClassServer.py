@@ -9,6 +9,9 @@ from DecodeEncodeServer import *
 sys.path.append("../map/")
 from Map import *
 
+TAILLE_MAP_X = 30
+TAILLE_MAP_Y = 30
+
 
 class ClientThread(threading.Thread) :
 
@@ -91,7 +94,7 @@ class Room(threading.Thread) :
 
 		self._player1 = player1
 		self._player2 = player2
-		self._map = Map(30, 30)
+		self._map = Map(TAILLE_MAP_X, TAILLE_MAP_Y)
 		self._waitingList = WaitingList
 
 	def getPlayer1(self) :
@@ -106,6 +109,28 @@ class Room(threading.Thread) :
 	def getMap(self) :
 		return self._map
 
+	def testPlayerLoose(self, nbPlayer) :
+		# 1 for Player 1
+		# 2 for Player 2
+		if nbPlayer == 1 :
+			for elem in self.getPlayer1().getTeam().getListChar() :
+				if not elem.isDead() :
+					return False
+			return True
+		elif nbPlayer == 2 :
+			for elem in self.getPlayer2().getTeam().getListChar() :
+				if not elem.isDead() :
+					return False
+			return True
+		else :
+			raise Exception("nbPlayer isn't 1 or 2")
+
+	def isGameOver(self) :
+		return self.testPlayerLoose(1) or self.testPlayerLoose(2)
+
+	def testEquality(self) :
+		return self.testPlayerLoose(1) and self.testPlayerLoose(2)
+
 	def sendPlayer(self, nb, mess) :
 		if nb == 1 :
 			self.getPlayer1().getReferenceSocket().send(cb.listToStringBinary(mess))
@@ -114,11 +139,25 @@ class Room(threading.Thread) :
 		elif nb == 3 :
 			self.getPlayer1().getReferenceSocket().send(cb.listToStringBinary(mess))
 			self.getPlayer2().getReferenceSocket().send(cb.listToStringBinary(mess))
+		else :
+			raise Exception("nb isn't 1 or 2 or 3")
+
+	def recvPlayer(self, nb) :
+		if nb == 1 :
+			mess = self.getPlayer1().getReferenceSocket().recv(2048)
+		elif nb == 2 :
+			mess = self.getPlayer2().getReferenceSocket().recv(2048)
+		elif nb == 3 :
+			mess = self.getPlayer1().getReferenceSocket().recv(2048)
+			mess = self.getPlayer2().getReferenceSocket().recv(2048)
+		else :
+			raise Exception("nb isn't 1 or 2 or 3")
+		return cb.stringBinaryToList(mess)
 
 	def run(self) :
-		#self.getPlayer1().getReferenceSocket().send("Joueur 1.".encode())
-		#self.getPlayer2().getReferenceSocket().send("Joueur 2.".encode())
-		self.sendPlayer(3, [1])
+		self.sendPlayer(1, [1, 1])
+		self.sendPlayer(2, [1, 2])
+		#Envois de l'arriver dans la room
 
 		textEncode = decodeTeamInit(self.getPlayer1(), self.getPlayer2())
 		if textEncode[0] == 666 :
@@ -127,16 +166,39 @@ class Room(threading.Thread) :
 		self.sendPlayer(1, textEncode[1])
 		self.sendPlayer(2, textEncode[1])
 		self.sendPlayer(2, textEncode[0])
+		#Envois des équipes
 
 		self.getMap().generationRelief()
 		textEncode = encodeMap(self.getMap())
+		if textEncode[0] == 666 :
+			raise Exception("An Error Occured for the Creation of the Map")
 		self.sendPlayer(3, textEncode)
+		#envois de la Map
 
-		tab = [self.getPlayer1(), self.getPlayer2()]
-		t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList(), self)
-		t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList(), self)
-		t1.start()
-		t2.start()
+		#tab = [self.getPlayer1(), self.getPlayer2()]
+		#t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList(), self)
+		#t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList(), self)
+		#t1.start()
+		#t2.start()
+		#ces deux threads écoute un joueur, et renvois les données reçu à tous les joueurs.
+
+		turn = 1
+		playerRunAway = False
+		print("1")
+		while not self.isGameOver() or not playerRunAway :
+			print("entrée dans la prmeière boucle")
+			isTurnOver = False
+			while not isTurnOver :
+				print("entrée 2")
+				isTurnOver = False
+				mess = self.recvPlayer(1) if turn % 2 == 1 else self.recvPlayer(2)
+				textEncode, isTurnOver, playerRunAway = decodeMessFight(mess, self.getMap(), self.getPlayer1(), self.getPlayer2())
+				if textEncode[0] == 666 :
+					raise Exception("An Error Occured When The Fight.")
+				self.sendPlayer(3, textEncode)
+
+
+
 
 
 class ThreadForPlayer(threading.Thread) :
