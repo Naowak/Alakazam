@@ -75,6 +75,8 @@ class Map:
 	def setCellCharacter(self, Loc, Char):#
 		if self.isOut(Loc):
 			raise Exception("Location out of map")
+		if Char == None :
+			raise Exception("Char = None")
 		self.getCell(Loc).setCharacter(Char)
 		self.setCellType(Loc, "Taken")
 	
@@ -205,6 +207,17 @@ class Map:
 			return None
 		else:
 			return Loc2
+
+	def getCellListeVoisins(self, Loc) :
+		if self.isOut(Loc) :
+			raise Exception("Location out of map")
+
+		l = [self.getUpRight(Loc), self.getRight(Loc),self.getDownRight(Loc), self.getDownLeft(Loc), self.getLeft(Loc), self.getUpLeft(Loc)]
+		l2 = list()
+		for elem in l :
+			if elem != None :
+				l2.append(elem)
+		return l2
 	
 	def generationRelief(self) :
 		for X in range( 1, self.getTailleX()-1 ) :

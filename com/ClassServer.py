@@ -175,17 +175,10 @@ class Room(threading.Thread) :
 		self.sendPlayer(3, textEncode)
 		#envois de la Map
 
-		#tab = [self.getPlayer1(), self.getPlayer2()]
-		#t1 = ThreadForPlayer(self.getPlayer1(), tab, self.getWaitingList(), self)
-		#t2 = ThreadForPlayer(self.getPlayer2(), tab, self.getWaitingList(), self)
-		#t1.start()
-		#t2.start()
-		#ces deux threads écoute un joueur, et renvois les données reçu à tous les joueurs.
-
 		turn = 1
 		playerRunAway = False
 		print("1")
-		while not self.isGameOver() or not playerRunAway :
+		while not self.isGameOver() and not playerRunAway :
 			print("entrée dans la prmeière boucle")
 			isTurnOver = False
 			while not isTurnOver :
@@ -196,6 +189,26 @@ class Room(threading.Thread) :
 				if textEncode[0] == 666 :
 					raise Exception("An Error Occured When The Fight.")
 				self.sendPlayer(3, textEncode)
+			turn += 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

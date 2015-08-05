@@ -47,25 +47,26 @@ class ClientThreadReception(threading.Thread) :
 
 			mess = self.getConnection().recv(2048)
 			mess = cb.stringBinaryToList(mess)
-			if(mess[0] == 0) :
+			if(len(mess) == 1 and mess[0] == 0) :
 				self.setContinue(False)
 				self.getThreadSendind().setContinue(False)
 				print("Deconnexion...")
-			elif(mess[0] == 1) :
+			elif(len(mess) == 1 and mess[0] == 1) :
 				Player1 = PlayerClient()
 				Player2 = PlayerClient()
-			elif(mess[0] == 2) :
-				M = MapClient(mess[1:])
-				print(M)
-			elif(mess[0] == 3) :
+			elif(len(mess) == 1 and mess[0] == 1 and mess[1] == 1) :
 				if not Player1.getTeam() :
-					Player1.setTeam(decodeTeamInit(mess[1:]))
+					Player1.setTeam(decodeTeamInit(mess[2:]))
 					print(Player1.getTeam())
 				elif not Player2.getTeam() :
-					Player2.setTeam(decodeTeamInit(mess[1:]))
+					Player2.setTeam(decodeTeamInit(mess[2:]))
 					print(Player2.getTeam())
 				else :
 					raise Exception("Both player have already a Team")
+			elif(len(mess) > 1 and mess[0] == 2) :
+				M = MapClient(mess[1:])
+				print(M)
+			
 			else :
 				print(mess)
 
