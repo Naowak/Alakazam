@@ -49,3 +49,9 @@ class Team():
 	
 	def getListChar(self):
 		return [self.getChar1(), self.getChar2(), self.getChar3()]
+
+	def __str__(self) :
+		s = ''
+		for elem in self.getListChar() :
+			s += str(elem)
+		return s
