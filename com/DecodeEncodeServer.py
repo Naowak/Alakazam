@@ -45,6 +45,16 @@ def decodeMessFight(mess, m, p1, p2) :
 			raise Exception("nombre pair de case dans le tableau")
 		mb.moveCharacter(mess[1:], m)
 		return mess, False, False
+	else :
+		return [666], True, True
+
+def hasAskForQuit(mess, turn, nb) :
+	if len(mess) == 1 and mess[0] == 0 :
+		if nb == 1 and turn % 2 == 1 :
+			return True
+		elif nb == 2 and turn % 2 == 0 :
+			return True
+	return False
 
 
 

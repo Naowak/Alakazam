@@ -187,9 +187,25 @@ class Room(threading.Thread) :
 				mess = self.recvPlayer(1) if turn % 2 == 1 else self.recvPlayer(2)
 				textEncode, isTurnOver, playerRunAway = decodeMessFight(mess, self.getMap(), self.getPlayer1(), self.getPlayer2())
 				if textEncode[0] == 666 :
-					raise Exception("An Error Occured When The Fight.")
+					raise Exception("An Error Occured In The Fight.")
 				self.sendPlayer(3, textEncode)
 			turn += 1
+
+		if not hasAskForQuit(mess, turn - 1, 1) :
+			newthread = ClientThread(self.getPlayer1().getIP(), self.getPlayer1().getPort(), self.getPlayer1().getReferenceSocket(), self.getWaitingList())
+			newthread.start()
+		else :
+			self.sendPlayer(1, [0])
+			self.getPlayer1().getReferenceSocket().close()
+			print("Client déconnecté :" + str(self.getPlayer1().getIP())+ " " + str(self.getPlayer1().getPort()))
+		if not hasAskForQuit(mess, turn - 1, 2) :
+			newthread2 = ClientThread(self.getPlayer2().getIP(), self.getPlayer2().getPort(), self.getPlayer2().getReferenceSocket(), self.getWaitingList())
+			newthread2.start()
+		else :
+			self.sendPlayer(2, [0])
+			self.getPlayer2().getReferenceSocket().close()
+			print("Client déconnecté :" + str(self.getPlayer2().getIP())+ " " + str(self.getPlayer2().getPort()))
+
 
 
 
