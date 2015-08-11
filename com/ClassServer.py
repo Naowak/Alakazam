@@ -177,12 +177,9 @@ class Room(threading.Thread) :
 
 		turn = 1
 		playerRunAway = False
-		print("1")
 		while not self.isGameOver() and not playerRunAway :
-			print("entrée dans la prmeière boucle")
 			isTurnOver = False
 			while not isTurnOver :
-				print("entrée 2")
 				isTurnOver = False
 				mess = self.recvPlayer(1) if turn % 2 == 1 else self.recvPlayer(2)
 				textEncode, isTurnOver, playerRunAway = decodeMessFight(mess, self.getMap(), self.getPlayer1(), self.getPlayer2())

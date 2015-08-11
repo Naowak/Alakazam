@@ -6,50 +6,9 @@ import convertBinary as cb
 sys.path.append("../map/")
 from MapClient import *
 from EncodeDecodeClient import *
-from PlayerClient import *
 
 IP = ""
 PORT = 10000
-
-class Battle() :
-
-	def __init__(self) :
-		self._player1 = PlayerClient()
-		self._player2 = PlayerClient()
-		self._map = None
-		self._nbPlayer = 0
-
-	def getMap(self) :
-		return self._map
-
-	def setMap(self, M) :
-		if not isinstance(M, MapClient) :
-			raise Exception("M isn't a MapClient")
-		self._map = M
-
-	def getPlayer1(self) :
-		return self._player1
-
-	def setPlayer1(self, Player) :
-		if not isinstance(Player, PlayerClient) :
-			raise Exception("Player isn't a PlayerClient")
-		self._player1 = Player
-
-	def getPlayer2(self) :
-		return self._player1
-
-	def setPlayer2(self, Player) :
-		if not isinstance(Player, PlayerClient) :
-			raise Exception("Player isn't a PlayerClient")
-		self._player1 = Player
-
-	def setNbPlayer(self, nb) :
-		if not isinstance(nb, int):
-			raise Exception("nb isn't an int")
-		self._nbPlayer = nb
-
-	def getNbPlayer(self) :
-		return self._nbPlayer
 
 
 class ClientThreadReception(threading.Thread) :
@@ -95,32 +54,12 @@ class ClientThreadReception(threading.Thread) :
 	def run(self) :
 		while(self.getContinue()) :
 
+			yourTurn = None
 			mess = self.getConnection().recv(2048)
 			mess = cb.stringBinaryToList(mess)
-			if(len(mess) == 1 and mess[0] == 0) :
-				self.setContinue(False)
-				self.getThreadSendind().setContinue(False)
-				print("Deconnexion...")
-			elif(len(mess) == 2 and mess[0] == 1) :
-				b = Battle()
-				self.setBattle(b)
-				self.getThreadSendind().setBattle(b)
-				self.getBattle().setNbPlayer(mess[1])
-			elif(len(mess) == 1 and mess[0] == 1 and mess[1] == 1) :
-				if not self.getBattle().getPlayer1().getTeam() :
-					self.getBattle().Player1().setTeam(decodeTeamInit(mess[2:]))
-					print(self.getBattle().Player1().getTeam())
-				elif not self.getBattle().Player2().getTeam() :
-					self.getBattle().Player2().setTeam(decodeTeamInit(mess[2:]))
-					print(self.getBattle().Player2().getTeam())
-				else :
-					raise Exception("Both player have already a Team")
-			elif(len(mess) > 1 and mess[0] == 2) :
-				self.getBattle().setMap(MapClient(mess[1:]))
-				print(self.getBattle().getMap())
-			
-			else :
-				print(mess)
+			messReturn = decodeMessClient(self, mess)
+			if messReturn == None :
+				pass
 
 
 
@@ -171,9 +110,6 @@ class ClientThreadSending(threading.Thread) :
 	def run(self) :
 		while(self.getContinue()) :
 			mess = demandeTexteToBinary()
-			#if(mess.decode() == '0') :
-			#	self.getThreadReception().setContinue(False)
-			#	self.setContinue(False)
 			sendRequest(self._connection, mess)
 
 
