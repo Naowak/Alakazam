@@ -11,6 +11,47 @@ from PlayerClient import *
 IP = ""
 PORT = 10000
 
+class Battle() :
+
+	def __init__(self) :
+		self._player1 = PlayerClient()
+		self._player2 = PlayerClient()
+		self._map = None
+		self._nbPlayer = 0
+
+	def getMap(self) :
+		return self._map
+
+	def setMap(self, M) :
+		if not isinstance(M, MapClient) :
+			raise Exception("M isn't a MapClient")
+		self._map = M
+
+	def getPlayer1(self) :
+		return self._player1
+
+	def setPlayer1(self, Player) :
+		if not isinstance(Player, PlayerClient) :
+			raise Exception("Player isn't a PlayerClient")
+		self._player1 = Player
+
+	def getPlayer2(self) :
+		return self._player1
+
+	def setPlayer2(self, Player) :
+		if not isinstance(Player, PlayerClient) :
+			raise Exception("Player isn't a PlayerClient")
+		self._player1 = Player
+
+	def setNbPlayer(self, nb) :
+		if not isinstance(nb, int):
+			raise Exception("nb isn't an int")
+		self._nbPlayer = nb
+
+	def getNbPlayer(self) :
+		return self._nbPlayer
+
+
 class ClientThreadReception(threading.Thread) :
 
 	def __init__(self, ip, port, connection, ThreadSending) :
@@ -21,6 +62,15 @@ class ClientThreadReception(threading.Thread) :
 		self._continue = True
 		self._threadSending = ThreadSending
 		ThreadSending.setThreadReception(self)
+		self._Battle = None
+
+	def getBattle(self) :
+		return self._Battle
+
+	def setBattle(self, battle) :
+		if not isinstance(battle, Battle) :
+			raise Exception("battle isn't a Battle")
+		self._Battle = battle
 
 	def getIP(self) :
 		return self._IP
@@ -51,21 +101,23 @@ class ClientThreadReception(threading.Thread) :
 				self.setContinue(False)
 				self.getThreadSendind().setContinue(False)
 				print("Deconnexion...")
-			elif(len(mess) == 1 and mess[0] == 1) :
-				Player1 = PlayerClient()
-				Player2 = PlayerClient()
+			elif(len(mess) == 2 and mess[0] == 1) :
+				b = Battle()
+				self.setBattle(b)
+				self.getThreadSendind().setBattle(b)
+				self.getBattle().setNbPlayer(mess[1])
 			elif(len(mess) == 1 and mess[0] == 1 and mess[1] == 1) :
-				if not Player1.getTeam() :
-					Player1.setTeam(decodeTeamInit(mess[2:]))
-					print(Player1.getTeam())
-				elif not Player2.getTeam() :
-					Player2.setTeam(decodeTeamInit(mess[2:]))
-					print(Player2.getTeam())
+				if not self.getBattle().getPlayer1().getTeam() :
+					self.getBattle().Player1().setTeam(decodeTeamInit(mess[2:]))
+					print(self.getBattle().Player1().getTeam())
+				elif not self.getBattle().Player2().getTeam() :
+					self.getBattle().Player2().setTeam(decodeTeamInit(mess[2:]))
+					print(self.getBattle().Player2().getTeam())
 				else :
 					raise Exception("Both player have already a Team")
 			elif(len(mess) > 1 and mess[0] == 2) :
-				M = MapClient(mess[1:])
-				print(M)
+				self.getBattle().setMap(MapClient(mess[1:]))
+				print(self.getBattle().getMap())
 			
 			else :
 				print(mess)
@@ -81,6 +133,15 @@ class ClientThreadSending(threading.Thread) :
 		self._connection = connection
 		self._continue = True
 		self._threadReception = None
+		self._Battle = None
+
+	def getBattle(self) :
+		return self._Battle
+
+	def setBattle(self, battle) :
+		if not isinstance(battle, Battle) :
+			raise Exception("battle isn't a Battle")
+		self._Battle = battle
 
 	def getIP(self) :
 		return self._IP
