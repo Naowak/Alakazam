@@ -63,6 +63,16 @@ def decodeTeamInit(mess) :
 		print("pas de team pour toi ? :")
 		print(mess[0])
 
+def moveCharacter(TR, mess) :
+	char = TR.getBattle().getMap().getCellCharacter(Location(mess[0], mess[1]))
+	i = 0
+	while i < (len(mess) // 2) - 1 :
+		#affichage
+		pass
+	TR.getBattle().getMap().setCellCharacter(l, char)
+	TR.getBattle().getMap().setNoCharacter(Location(mess[0], mess[1]))
+
+
 def decodeMessClient(TR, mess) :
 
 	if len(mess) == 1 and mess[0] == 0  :
@@ -103,8 +113,13 @@ def decodeMessClient(TR, mess) :
 		print(TR.getBattle().getMap())
 
 	elif len(mess) == 1 and mess[0] == 3 and TR.getBattle() :
+		#Ordre de changer de tour
 		TR.getBattle().setYourTurn(not TR.getBattle().yourTurn())
 		print("Hey, Change of turn !")
+
+	elif len(mess) > 5 and len(mess) % 2 == 1 and  mess[0] == 100 and TR.getBattle() :
+		moveCharacter(TR, mess[1:])
+
 
 	else :
 		#rien ne va

@@ -25,6 +25,7 @@ def moveCharacter(mess, m) :
 		k = l
 		i += 1
 	m.setCellCharacter(l, m.getCellCharacter(Location(mess[0], mess[1])))
+	m.setNoCharacter(Location(mess[0], mess[1]))
 
 
 		

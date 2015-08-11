@@ -79,6 +79,12 @@ class Map:
 			raise Exception("Char = None")
 		self.getCell(Loc).setCharacter(Char)
 		self.setCellType(Loc, "Taken")
+
+	def setNoCharacter(self, Loc) :
+		if self.isOut(Loc) :
+			raise Exception("Location out of map")
+		self.setCellType(Loc, "Empty")
+		self.getCell(Loc).setCharacter(None)
 	
 	def getCellCharacter(self, Loc):#
 		if self.isOut(Loc):
