@@ -31,12 +31,12 @@ class ClientThread(threading.Thread) :
 			print(r)
 			r = cb.stringBinaryToList(r)
 			print(r)
-			if r[0] == 0 :
+			if len(r) == 1 and r[0] == 0 :
 				print("Client déconnecté :" + str(self.getIP())+ " " + str(self.getPort()))
 				self.getClientSocket().send("0".encode())
 				self.getClientSocket().close()
 				b = False
-			elif r[0] == 1 :
+			elif len(r) > 1 and r[0] == 1 :
 				self.getWaitingList().addPlayer(Player(self.getClientSocket(), self.getIP(), self.getPort(), r[1:]))
 				#self.getClientSocket().send('Waiting for an opponent'.encode())
 				b = False
@@ -174,6 +174,9 @@ class Room(threading.Thread) :
 			raise Exception("An Error Occured for the Creation of the Map")
 		self.sendPlayer(3, textEncode)
 		#envois de la Map
+
+		self.sendPlayer(1, [3])
+		#Indique au joueur 1 que c'est à son tour de jouer
 
 		turn = 1
 		playerRunAway = False

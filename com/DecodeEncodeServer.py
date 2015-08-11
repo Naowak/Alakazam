@@ -32,19 +32,23 @@ def decodeMessFight(mess, m, p1, p2) :
 	if len(mess) == 2 and mess[0] == 0 and mess[1] == 1 :
 		#Joueur abandonne la partie
 		return [0, 1], True, True
+
 	elif len(mess) == 1 and mess[0] == 0 :
 		#Joueur quitte le jeu
 		return [0, 1], True, True
+
 	elif len(mess) == 1 and mess[0] == 3 :
 		#Changement de tour
 		return [3], True, False
 		#On envois seulement que le tour change, les clients doivent alors gérer d'eux même pour savoir si c'est à eux de jouer ou non
+	
 	elif len(mess) > 1 and mess[0] == 100 :
 		#Mouvement d'un personnage
 		if len(mess) % 2 == 0 :
 			raise Exception("nombre pair de case dans le tableau")
 		mb.moveCharacter(mess[1:], m)
 		return mess, False, False
+		
 	else :
 		return [666], True, True
 

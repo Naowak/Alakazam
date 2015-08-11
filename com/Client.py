@@ -4,7 +4,6 @@ import sys
 sys.path.append("../tools/")
 import convertBinary as cb
 sys.path.append("../map/")
-from MapClient import *
 from EncodeDecodeClient import *
 
 IP = ""
@@ -19,9 +18,9 @@ class ClientThreadReception(threading.Thread) :
 		self._port = port
 		self._connection = connection
 		self._continue = True
+		self._Battle = None
 		self._threadSending = ThreadSending
 		ThreadSending.setThreadReception(self)
-		self._Battle = None
 
 	def getBattle(self) :
 		return self._Battle
@@ -48,20 +47,29 @@ class ClientThreadReception(threading.Thread) :
 			raise Exception("b isn't a boolean")
 		self._continue = b
 
-	def getThreadSendind(self) :
+	def sendMessage(self, mess) :
+		if isinstance(mess, list) :
+			mess = listToStringBinary(mess)
+		else :
+			mess = mess.encode()
+		sendRequest(self.getConnection(), mess)
+
+	def deleteBattle(self) :
+		self._Battle = None
+
+	def getThreadSending(self) :
 		return self._threadSending
 
 	def run(self) :
+		#self.sendMessage("1 1")
+
 		while(self.getContinue()) :
 
-			yourTurn = None
 			mess = self.getConnection().recv(2048)
 			mess = cb.stringBinaryToList(mess)
 			messReturn = decodeMessClient(self, mess)
 			if messReturn == None :
 				pass
-
-
 
 class ClientThreadSending(threading.Thread) :
 
