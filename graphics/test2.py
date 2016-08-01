@@ -23,7 +23,7 @@ import array
 grey_dark = (0.6, 0.6, 0.6)
 grey_shiny = (0.8, 0.8, 0.8)
 
-SIZE = 0.5
+SIZE = 0.1
 
 
 
@@ -358,10 +358,23 @@ def run() :
 	pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 
 	gluPerspective(45, (display[0]/display[1]), 0.1, 50)
-
-	glTranslatef(0,0,-30)
+	glTranslatef(0,0, -10)
 	glRotatef(30, 1, 0, 0)
 	glColor3fv(grey_shiny)
+
+	size_i = 25
+	size_j = 25
+	nb_vertices = size_j*size_i*12
+	vertices = vertices_generator(size_i, size_j, 0, 0.5)
+	indice = indices_generator(size_i, size_j)
+
+	display_list = glGenLists(1)
+	glNewList(display_list, GL_COMPILE)
+	glEnableClientState(GL_VERTEX_ARRAY)
+	glVertexPointer(3, GL_FLOAT, 0, vertices)
+	glDrawElements(GL_LINES, nb_vertices*3, GL_UNSIGNED_INT, indice)
+	glDisableClientState(GL_VERTEX_ARRAY)
+	glEndList()
 
 	while True:
 		start = time.time()
@@ -371,33 +384,10 @@ def run() :
 				pygame.quit()
 				quit()
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-		glRotatef(1, 1, 1, 1)
+		#glTranslatef(0, 0, 1)
+		glRotatef(1, 0, 1, 0)
 
-		# glBegin(GL_LINES)
-		# for i in range(10) :
-		# 	for j in range(10) :
-		# 		coord = location_to_coord(Location.Location(i, j))
-		# 		Hex3D(coord[0], 0, 0.5, coord[1])
-		# glEnd()
-		#HexGrid3D(20, 5)
-
-		#------------------------
-
-		size_i = 10
-		size_j = 10
-		nb_vertices = size_j*size_i*12
-		vertices = vertices_generator(size_i, size_j, 0, 0.5)
-		indice = indices_generator(size_i, size_j)
-
-		glEnableClientState(GL_VERTEX_ARRAY)
-
-		glVertexPointer(3, GL_FLOAT, 0, vertices)
-		glDrawElements(GL_LINES, nb_vertices*3, GL_UNSIGNED_INT, indice)
-
-		glDisableClientState(GL_VERTEX_ARRAY)
-
-		#------------------------
-
+		glCallList(display_list)
 
 		pygame.display.flip()
 		#pygame.time.wait(10)
@@ -405,4 +395,7 @@ def run() :
 		end = time.time()
 		fps = int(round(1/(end - start)))
 		pygame.display.set_caption("hex_map" + ": " + str(fps))
+
+	glDeleteLists(list, 1)
+
 run()
