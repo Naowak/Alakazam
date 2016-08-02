@@ -23,7 +23,7 @@ import array
 grey_dark = (0.6, 0.6, 0.6)
 grey_shiny = (0.8, 0.8, 0.8)
 
-SIZE = 0.5
+SIZE = 1
 
 
 
@@ -253,6 +253,7 @@ SIZE = 0.5
 # 		for vertex in edge :
 # 			glVertex3fv(vertices[vertex])
 
+
 def point_central(i_size, j_size) :
 	(x, z) = location_to_coord(Location.Location(i_size, j_size))
 	x += 1
@@ -306,7 +307,33 @@ def vertices_generator(i_size, j_size, high_min, high_max) :
 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
 	return vertices
 
-def indices_generator(i_size, j_size) :
+def indices_hex_bot_generator(indice, nb) :
+	indice.append(nb+0)
+	indice.append(nb+1)
+	indice.append(nb+2)
+	indice.append(nb+3)
+	indice.append(nb+4)
+	indice.append(nb+5)
+
+def indices_hex_top_generator(indice, nb) :
+	indice.append(nb+6)
+	indice.append(nb+7)
+	indice.append(nb+8)
+	indice.append(nb+9)
+	indice.append(nb+10)
+	indice.append(nb+11)
+
+def indices_hex_generator(i_size, j_size) :
+	indice = list()
+	nb = 0
+	for j in range(j_size) :
+		for i in range(i_size) :
+			indices_hex_bot_generator(indice, nb)
+			indices_hex_top_generator(indice, nb)
+			nb += 12
+	return indice
+
+def indices_edges_generator(i_size, j_size) :
 	indice = list()
 	nb = 0
 	for j in range(j_size) :
@@ -352,6 +379,24 @@ def indices_generator(i_size, j_size) :
 			nb+=12
 	return indice
 
+def color_Hex(i, j, i_size, vertices) :
+	nb = 12*(j*i_size + i)
+	sides = (
+	(nb + 0, nb + 1, nb + 7, nb + 6),
+	(nb + 1, nb + 2, nb + 8, nb + 7),
+	(nb + 2, nb + 3, nb + 9, nb + 8),
+	(nb + 3, nb + 4, nb + 10, nb + 9),
+	(nb + 4, nb + 5, nb + 11, nb + 10),
+	(nb + 5, nb + 0, nb + 6, nb + 11),
+	(nb + 0, nb + 1, nb + 2, nb + 3, nb + 4, nb + 5),
+	(nb + 6, nb + 7, nb + 8, nb + 9, nb + 10, nb + 11)
+	)
+
+	glBegin(GL_POLYGON)
+	for surface in sides :
+		for vertex in surface :
+			glVertex3fv((vertices[3*vertex], vertices[3*vertex + 1], vertices[3*vertex+2]))
+	glEnd()
 
 def location_to_coord(loc) :
 	if not isinstance(loc, Location.Location) :
@@ -366,13 +411,15 @@ def location_to_coord(loc) :
 	
 def run() :
 	pygame.init()
-	display = (800, 600)
-	pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+	information_screen = pygame.display.Info()
+	display = (information_screen.current_w, information_screen.current_h)
+	pygame.display.set_mode(display, FULLSCREEN|DOUBLEBUF|OPENGL)
 
-	gluPerspective(70, (display[0]/display[1]), 0.1, 50)
+	glEnable(GL_DEPTH_TEST)
+	gluPerspective(70, (display[0]/display[1]), 0.1, 100)
 	glRotatef(90, 0, 1, 0)
-	glTranslatef(24, 0, 0)
-	glRotatef(45, 0, 0, 1)
+	glTranslatef(40, 5, 0)
+	glRotatef(60, 0, 0, 1)
 	#glRotatef(70, 1, 0, 0)
 	glColor3fv(grey_shiny)
 
@@ -380,25 +427,30 @@ def run() :
 	size_j = 25
 	nb_vertices = size_j*size_i*12
 	vertices = vertices_generator(size_i, size_j, 0, 0.5)
-	indice = indices_generator(size_i, size_j)
+	indice_edges = indices_edges_generator(size_i, size_j)
 
-	zoom = 1.0
-
-	display_list = glGenLists(1)
-	glNewList(display_list, GL_COMPILE)
+	display_edges_list = glGenLists(1)
+	glNewList(display_edges_list, GL_COMPILE)
 	glEnableClientState(GL_VERTEX_ARRAY)
 	glVertexPointer(3, GL_FLOAT, 0, vertices)
-	glDrawElements(GL_LINES, nb_vertices*3, GL_UNSIGNED_INT, indice)
+	glDrawElements(GL_LINES, nb_vertices*3, GL_UNSIGNED_INT, indice_edges)
 	glDisableClientState(GL_VERTEX_ARRAY)
+	glEndList()
+
+	display_hex_list = glGenLists(1)
+	glNewList(display_hex_list, GL_COMPILE)
+	for j in range(size_j) :
+		for i in range(size_i) :
+			color_Hex(i, j, size_i, vertices)
 	glEndList()
 
 	while True:
 		start = time.time()
 
 		for event in pygame.event.get() :
-			if event.type == pygame.QUIT :
+			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE) :
 				pygame.quit()
-				quit()
+				exit()
 
 			if event.type == MOUSEMOTION and event.buttons[2] == 1 :
 				mouvement_ratio_horizontal = event.rel[0] / display[0]
@@ -414,8 +466,17 @@ def run() :
 			# 		glTranslatef(0, -1, 0)
 
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-		glCallList(display_list)
+
+		glColor3fv((180/256, 140/256, 100/256))
+		glCallList(display_hex_list)
+		glColor3fv((0.34, 0.31, 0.22))
+		glCallList(display_edges_list)
+		glTranslatef(0, 2, 0)
+		glCallList(display_edges_list)
+		glTranslatef(0, -2, 0)
+
 		pygame.display.flip()
+		pygame.time.wait(10)
 
 		end = time.time()
 		fps = int(round(1/(end - start)))
