@@ -23,7 +23,7 @@ import array
 grey_dark = (0.6, 0.6, 0.6)
 grey_shiny = (0.8, 0.8, 0.8)
 
-SIZE = 0.3
+SIZE = 0.5
 
 
 
@@ -369,10 +369,10 @@ def run() :
 	display = (800, 600)
 	pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 
-	gluPerspective(45, (display[0]/display[1]), 0.1, 50)
+	gluPerspective(70, (display[0]/display[1]), 0.1, 50)
 	glRotatef(90, 0, 1, 0)
-	glTranslatef(20, 0, 0)
-	glRotatef(70, 0, 0, 1)
+	glTranslatef(24, 0, 0)
+	glRotatef(45, 0, 0, 1)
 	#glRotatef(70, 1, 0, 0)
 	glColor3fv(grey_shiny)
 
@@ -381,6 +381,8 @@ def run() :
 	nb_vertices = size_j*size_i*12
 	vertices = vertices_generator(size_i, size_j, 0, 0.5)
 	indice = indices_generator(size_i, size_j)
+
+	zoom = 1.0
 
 	display_list = glGenLists(1)
 	glNewList(display_list, GL_COMPILE)
@@ -398,30 +400,22 @@ def run() :
 				pygame.quit()
 				quit()
 
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_LEFT:
-					glTranslatef(-0.5,0,0)
-				if event.key == pygame.K_RIGHT:
-					glTranslatef(0.5,0,0)
-				if event.key == pygame.K_UP:
-					glTranslatef(0,1,0)
-				if event.key == pygame.K_DOWN:
-					glTranslatef(0,-1,0)
+			if event.type == MOUSEMOTION and event.buttons[2] == 1 :
+				mouvement_ratio_horizontal = event.rel[0] / display[0]
+				if event.pos[1] >= display[1]/2 :
+					glRotatef(180*mouvement_ratio_horizontal, 0, 1, 0)
+				else :
+					glRotatef(-180*mouvement_ratio_horizontal, 0, 1, 0)
 
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				if event.button == 4:
-					glTranslatef(0,0,1.0)
-				if event.button == 5:
-					glTranslatef(0,0,-1.0)
+			# if event.type == pygame.MOUSEBUTTONDOWN :
+			# 	if event.button == 4 :
+			# 		glTranslatef(0, 1, 0)
+			# 	if event.button == 5 :
+			# 		glTranslatef(0, -1, 0)
 
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-		#glTranslatef(0, 0, 1)
-		#glRotatef(1, 0, 1, 0)
-
 		glCallList(display_list)
-
 		pygame.display.flip()
-		#pygame.time.wait(10)
 
 		end = time.time()
 		fps = int(round(1/(end - start)))
