@@ -23,7 +23,7 @@ import array
 grey_dark = (0.6, 0.6, 0.6)
 grey_shiny = (0.8, 0.8, 0.8)
 
-SIZE = 0.1
+SIZE = 0.3
 
 
 
@@ -253,49 +253,57 @@ SIZE = 0.1
 # 		for vertex in edge :
 # 			glVertex3fv(vertices[vertex])
 
+def point_central(i_size, j_size) :
+	(x, z) = location_to_coord(Location.Location(i_size, j_size))
+	x += 1
+	z += m.sqrt(3)/2
+	return (x/2, z/2)
+
 def vertices_generator(i_size, j_size, high_min, high_max) :
 	vertices = list()
+	racine_3_sur_2 = m.sqrt(3)/2
+	(x_center, z_center) = point_central(i_size, j_size)
 	for j in range(j_size) :
 		for i in range(i_size) :
 			(x, z) = location_to_coord(Location.Location(i, j))
 
-			vertices.append(SIZE * (x + 1))
+			vertices.append(SIZE * (-x_center + x + 1))
 			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (z + 0)),
-			vertices.append(SIZE * (x + 1/2))
+			vertices.append(SIZE * (-z_center + z + 0))
+			vertices.append(SIZE * (-x_center + x + 1/2))
 			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (z + m.sqrt(3)/2))
-			vertices.append(SIZE * (x + -1/2))
+			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+			vertices.append(SIZE * (-x_center + x + -1/2))
 			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (z + m.sqrt(3)/2))
-			vertices.append(SIZE * (x + -1))
+			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+			vertices.append(SIZE * (-x_center + x + -1))
 			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (z + 0))
-			vertices.append(SIZE * (x + -1/2))
+			vertices.append(SIZE * (-z_center + z + 0))
+			vertices.append(SIZE * (-x_center + x + -1/2))
 			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (z + -m.sqrt(3)/2))
-			vertices.append(SIZE * (x + 1/2))
+			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
+			vertices.append(SIZE * (-x_center + x + 1/2))
 			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (z + -m.sqrt(3)/2))
+			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
 
-			vertices.append(SIZE * (x + 1))
+			vertices.append(SIZE * (-x_center + x + 1))
 			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (z + 0))
-			vertices.append(SIZE * (x + 1/2))
+			vertices.append(SIZE * (-z_center + z + 0))
+			vertices.append(SIZE * (-x_center + x + 1/2))
 			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (z + m.sqrt(3)/2))
-			vertices.append(SIZE * (x + -1/2))
+			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+			vertices.append(SIZE * (-x_center + x + -1/2))
 			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (z + m.sqrt(3)/2))
-			vertices.append(SIZE * (x + -1))
+			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+			vertices.append(SIZE * (-x_center + x + -1))
 			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (z + 0))
-			vertices.append(SIZE * (x + -1/2))
+			vertices.append(SIZE * (-z_center + z + 0))
+			vertices.append(SIZE * (-x_center + x + -1/2))
 			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (z + -m.sqrt(3)/2))
-			vertices.append(SIZE * (x + 1/2)) 
+			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
+			vertices.append(SIZE * (-x_center + x + 1/2)) 
 			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (z + -m.sqrt(3)/2))
+			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
 	return vertices
 
 def indices_generator(i_size, j_size) :
@@ -348,8 +356,12 @@ def indices_generator(i_size, j_size) :
 def location_to_coord(loc) :
 	if not isinstance(loc, Location.Location) :
 		raise Exception("loc isn't a Location")
-	x = loc.getAbscisse()*2*m.cos(m.radians(30))*m.cos(m.radians(30))
-	z = loc.getAbscisse()*2*m.cos(m.radians(60))*m.cos(m.radians(30)) + 2*m.cos(m.radians(30))*loc.getOrdonnee()
+	# x = loc.getAbscisse()*2*m.cos(m.radians(30))*m.cos(m.radians(30))
+	# z = loc.getAbscisse()*2*m.cos(m.radians(60))*m.cos(m.radians(30)) + 2*m.cos(m.radians(30))*loc.getOrdonnee()
+	z = loc.getAbscisse()*2*m.cos(m.radians(30))
+	if loc.getOrdonnee()%2 == 1 :
+		z += m.cos(m.radians(30))
+	x = loc.getOrdonnee()*1.5
 	return (x,z)
 	
 def run() :
@@ -358,8 +370,10 @@ def run() :
 	pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 
 	gluPerspective(45, (display[0]/display[1]), 0.1, 50)
-	glTranslatef(0,0, -10)
-	glRotatef(30, 1, 0, 0)
+	glRotatef(90, 0, 1, 0)
+	glTranslatef(20, 0, 0)
+	glRotatef(70, 0, 0, 1)
+	#glRotatef(70, 1, 0, 0)
 	glColor3fv(grey_shiny)
 
 	size_i = 25
@@ -383,9 +397,26 @@ def run() :
 			if event.type == pygame.QUIT :
 				pygame.quit()
 				quit()
+
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_LEFT:
+					glTranslatef(-0.5,0,0)
+				if event.key == pygame.K_RIGHT:
+					glTranslatef(0.5,0,0)
+				if event.key == pygame.K_UP:
+					glTranslatef(0,1,0)
+				if event.key == pygame.K_DOWN:
+					glTranslatef(0,-1,0)
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 4:
+					glTranslatef(0,0,1.0)
+				if event.button == 5:
+					glTranslatef(0,0,-1.0)
+
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 		#glTranslatef(0, 0, 1)
-		glRotatef(1, 0, 1, 0)
+		#glRotatef(1, 0, 1, 0)
 
 		glCallList(display_list)
 
