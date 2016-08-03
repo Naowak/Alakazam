@@ -2,7 +2,6 @@ import sys
 sys.path.append("./../map")
 
 import pygame
-import Location
 import math as m
 from pygame.locals import *
 from OpenGL.GL import *
@@ -11,6 +10,9 @@ from OpenGL.GLU import *
 from enum import Enum
 import time
 import array
+
+import Location
+import Map
 
 # class Angle(Enum) :
 # 	left = 0
@@ -509,32 +511,56 @@ def run() :
 	pygame.display.set_mode(display, FULLSCREEN|DOUBLEBUF|OPENGL)
 
 	glEnable(GL_DEPTH_TEST)
-	gluPerspective(70, (display[0]/display[1]), 0.1, 100)
+	gluPerspective(70, (display[0]/display[1]), 0.1, 200)
 	glRotatef(90, 0, 1, 0)
 	glTranslatef(40, 5, 0)
 	glRotatef(60, 0, 0, 1)
 
-	size_i = 25
-	size_j = 25
+	#data_init
+	size_i = 26
+	size_j = 26
 	bottom_y = 0
 	top_y = 0.5
-	color_lines = (90/256, 80/256, 50/256)
-	color_sides = (180/256, 140/256, 100/256)
+	color_lines = (60/256, 60/256, 60/256)
+	color_sides_empty = (170/256, 160/256, 150/256)
+	color_sides_full = (120/256, 110/256, 100/256)
 
-	display_list_one_hex = glGenLists(1)
-	glNewList(display_list_one_hex, GL_COMPILE)
-	draw_hex(color_lines, color_sides, bottom_y, top_y)
+	#map_data_init
+	map_data = Map.Map(size_i, size_j)
+	map_data.generationRelief()
+
+	#empty_hex
+	display_list_empty_hex = glGenLists(1)
+	glNewList(display_list_empty_hex, GL_COMPILE)
+	draw_hex(color_lines, color_sides_empty, bottom_y, top_y)
 	glEndList()
 
+	#full_hex
+	display_list_full_hex = glGenLists(1)
+	glNewList(display_list_full_hex, GL_COMPILE)
+	draw_hex(color_lines, color_sides_full, bottom_y, top_y)
+	draw_hex(color_lines, color_sides_full, top_y, top_y*2)
+	glEndList()
+
+	#all_hex
 	display_list_map = glGenLists(1)
 	glNewList(display_list_map, GL_COMPILE)
 	(central_x, central_z) = point_central(size_i, size_j)
 	glTranslatef(-central_x, 0, -central_z)
 	for j in range(size_j) :
 		for i in range(size_i) :
-			(x, z) = location_to_coord(Location.Location(i, j))
+			loc = Location.Location(i, j)
+			cell_type = map_data.getCellType(loc)
+			(x, z) = location_to_coord(loc)
 			glTranslatef(x, 0, z)
-			glCallList(display_list_one_hex)
+			if cell_type == "Empty" :
+				glCallList(display_list_empty_hex)
+			elif cell_type == "Taken" :
+				glCallList(display_list_empty_hex)
+			elif cell_type == "Full" :
+				glCallList(display_list_full_hex)
+			elif cell_type == "Hole" :
+			 	pass
 			glTranslatef(-x, 0, -z)
 	glTranslatef(central_x, 0, central_z)
 	glEndList()
@@ -565,7 +591,8 @@ def run() :
 		fps = int(round(1/(end - start)))
 		pygame.display.set_caption("hex_map" + ": " + str(fps))
 
-	glDeleteLists(display_list_one_hex, 1)
+	glDeleteLists(display_list_empty_hex, 1)
+	glDeleteLists(display_list_full_hex, 1)
 	glDeleteLists(display_list_map, 1)
 
 run()

@@ -226,8 +226,8 @@ class Map:
 		return l2
 	
 	def generationRelief(self) :
-		for X in range( 1, self.getTailleX()-1 ) :
-			for Y in range(1, (self.getTailleY()-1) // 2 ) :
+		for X in range(self.getTailleX()-1 ) :
+			for Y in range(self.getTailleY() // 2 ) :
 				r = random()
 				if r < 0.075 :
 					self.setCellType(Location (X, Y), 'Full')

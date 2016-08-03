@@ -23,6 +23,7 @@ loc2 = Location(5,5)
 c.setCharacterOnMap(loc1, m)
 c2.setCharacterOnMap(loc2, m)
 m.setCellType(Location(2,10), "Full")
+m.setCellType(Location(12,20), "Full")
 
 r.findRoadsForCells(c.getMouvementPoint(), c.getLocation(), m)
 l = r.getListeCellsLocationWithRoads()
@@ -31,7 +32,7 @@ l = r.getListeCellsLocationWithRoads()
 
 #print(c.getLocation())
 s.fieldOfView(c.getLocation(), m)
-#print(s.string(c.getLocation(), m))
+print(s.string(c.getLocation(), m))
 
 cap1 = Capacity("attaque15", attaque15, 0, 15, 0, True)
 
