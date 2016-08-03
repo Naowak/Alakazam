@@ -20,9 +20,6 @@ import array
 # 	bottom_right = 4
 # 	bottom_left = 5
 
-grey_dark = (0.6, 0.6, 0.6)
-grey_shiny = (0.8, 0.8, 0.8)
-
 SIZE = 1
 
 
@@ -253,150 +250,143 @@ SIZE = 1
 # 		for vertex in edge :
 # 			glVertex3fv(vertices[vertex])
 
+# def vertices_generator(i_size, j_size, high_min, high_max) :
+# 	vertices = list()
+# 	racine_3_sur_2 = m.sqrt(3)/2
+# 	(x_center, z_center) = point_central(i_size, j_size)
+# 	for j in range(j_size) :
+# 		for i in range(i_size) :
+# 			(x, z) = location_to_coord(Location.Location(i, j))
 
-def point_central(i_size, j_size) :
-	(x, z) = location_to_coord(Location.Location(i_size, j_size))
-	x += 1
-	z += m.sqrt(3)/2
-	return (x/2, z/2)
+# 			vertices.append(SIZE * (-x_center + x + 1))
+# 			vertices.append(SIZE * high_min)
+# 			vertices.append(SIZE * (-z_center + z + 0))
+# 			vertices.append(SIZE * (-x_center + x + 1/2))
+# 			vertices.append(SIZE * high_min)
+# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+# 			vertices.append(SIZE * (-x_center + x + -1/2))
+# 			vertices.append(SIZE * high_min)
+# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+# 			vertices.append(SIZE * (-x_center + x + -1))
+# 			vertices.append(SIZE * high_min)
+# 			vertices.append(SIZE * (-z_center + z + 0))
+# 			vertices.append(SIZE * (-x_center + x + -1/2))
+# 			vertices.append(SIZE * high_min)
+# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
+# 			vertices.append(SIZE * (-x_center + x + 1/2))
+# 			vertices.append(SIZE * high_min)
+# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
 
-def vertices_generator(i_size, j_size, high_min, high_max) :
-	vertices = list()
-	racine_3_sur_2 = m.sqrt(3)/2
-	(x_center, z_center) = point_central(i_size, j_size)
-	for j in range(j_size) :
-		for i in range(i_size) :
-			(x, z) = location_to_coord(Location.Location(i, j))
+# 			vertices.append(SIZE * (-x_center + x + 1))
+# 			vertices.append(SIZE * high_max)
+# 			vertices.append(SIZE * (-z_center + z + 0))
+# 			vertices.append(SIZE * (-x_center + x + 1/2))
+# 			vertices.append(SIZE * high_max)
+# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+# 			vertices.append(SIZE * (-x_center + x + -1/2))
+# 			vertices.append(SIZE * high_max)
+# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
+# 			vertices.append(SIZE * (-x_center + x + -1))
+# 			vertices.append(SIZE * high_max)
+# 			vertices.append(SIZE * (-z_center + z + 0))
+# 			vertices.append(SIZE * (-x_center + x + -1/2))
+# 			vertices.append(SIZE * high_max)
+# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
+# 			vertices.append(SIZE * (-x_center + x + 1/2)) 
+# 			vertices.append(SIZE * high_max)
+# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
+# 	return vertices
 
-			vertices.append(SIZE * (-x_center + x + 1))
-			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (-z_center + z + 0))
-			vertices.append(SIZE * (-x_center + x + 1/2))
-			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-			vertices.append(SIZE * (-x_center + x + -1/2))
-			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-			vertices.append(SIZE * (-x_center + x + -1))
-			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (-z_center + z + 0))
-			vertices.append(SIZE * (-x_center + x + -1/2))
-			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-			vertices.append(SIZE * (-x_center + x + 1/2))
-			vertices.append(SIZE * high_min)
-			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
+# def indices_hex_bot_generator(indice, nb) :
+# 	indice.append(nb+0)
+# 	indice.append(nb+1)
+# 	indice.append(nb+2)
+# 	indice.append(nb+3)
+# 	indice.append(nb+4)
+# 	indice.append(nb+5)
 
-			vertices.append(SIZE * (-x_center + x + 1))
-			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (-z_center + z + 0))
-			vertices.append(SIZE * (-x_center + x + 1/2))
-			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-			vertices.append(SIZE * (-x_center + x + -1/2))
-			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-			vertices.append(SIZE * (-x_center + x + -1))
-			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (-z_center + z + 0))
-			vertices.append(SIZE * (-x_center + x + -1/2))
-			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-			vertices.append(SIZE * (-x_center + x + 1/2)) 
-			vertices.append(SIZE * high_max)
-			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-	return vertices
+# def indices_hex_top_generator(indice, nb) :
+# 	indice.append(nb+6)
+# 	indice.append(nb+7)
+# 	indice.append(nb+8)
+# 	indice.append(nb+9)
+# 	indice.append(nb+10)
+# 	indice.append(nb+11)
 
-def indices_hex_bot_generator(indice, nb) :
-	indice.append(nb+0)
-	indice.append(nb+1)
-	indice.append(nb+2)
-	indice.append(nb+3)
-	indice.append(nb+4)
-	indice.append(nb+5)
+# def indices_hex_generator(i_size, j_size) :
+# 	indice = list()
+# 	nb = 0
+# 	for j in range(j_size) :
+# 		for i in range(i_size) :
+# 			indices_hex_bot_generator(indice, nb)
+# 			indices_hex_top_generator(indice, nb)
+# 			nb += 12
+# 	return indice
 
-def indices_hex_top_generator(indice, nb) :
-	indice.append(nb+6)
-	indice.append(nb+7)
-	indice.append(nb+8)
-	indice.append(nb+9)
-	indice.append(nb+10)
-	indice.append(nb+11)
+# def indices_edges_generator(i_size, j_size) :
+# 	indice = list()
+# 	nb = 0
+# 	for j in range(j_size) :
+# 		for i in range(i_size) :
+# 			indice.append(nb+0)
+# 			indice.append(nb+1)
+# 			indice.append(nb+1)
+# 			indice.append(nb+2)
+# 			indice.append(nb+2)
+# 			indice.append(nb+3)
+# 			indice.append(nb+3)
+# 			indice.append(nb+4)
+# 			indice.append(nb+4)
+# 			indice.append(nb+5)
+# 			indice.append(nb+5)
+# 			indice.append(nb+0)
 
-def indices_hex_generator(i_size, j_size) :
-	indice = list()
-	nb = 0
-	for j in range(j_size) :
-		for i in range(i_size) :
-			indices_hex_bot_generator(indice, nb)
-			indices_hex_top_generator(indice, nb)
-			nb += 12
-	return indice
+# 			indice.append(nb+6)
+# 			indice.append(nb+7)
+# 			indice.append(nb+7)
+# 			indice.append(nb+8)
+# 			indice.append(nb+8)
+# 			indice.append(nb+9)
+# 			indice.append(nb+9)
+# 			indice.append(nb+10)
+# 			indice.append(nb+10)
+# 			indice.append(nb+11)
+# 			indice.append(nb+11)
+# 			indice.append(nb+6)
 
-def indices_edges_generator(i_size, j_size) :
-	indice = list()
-	nb = 0
-	for j in range(j_size) :
-		for i in range(i_size) :
-			indice.append(nb+0)
-			indice.append(nb+1)
-			indice.append(nb+1)
-			indice.append(nb+2)
-			indice.append(nb+2)
-			indice.append(nb+3)
-			indice.append(nb+3)
-			indice.append(nb+4)
-			indice.append(nb+4)
-			indice.append(nb+5)
-			indice.append(nb+5)
-			indice.append(nb+0)
+# 			indice.append(nb+0)
+# 			indice.append(nb+6)
+# 			indice.append(nb+1)
+# 			indice.append(nb+7)
+# 			indice.append(nb+2)
+# 			indice.append(nb+8)
+# 			indice.append(nb+3)
+# 			indice.append(nb+9)
+# 			indice.append(nb+4)
+# 			indice.append(nb+10)
+# 			indice.append(nb+5)
+# 			indice.append(nb+11)
+# 			nb+=12
+# 	return indice
 
-			indice.append(nb+6)
-			indice.append(nb+7)
-			indice.append(nb+7)
-			indice.append(nb+8)
-			indice.append(nb+8)
-			indice.append(nb+9)
-			indice.append(nb+9)
-			indice.append(nb+10)
-			indice.append(nb+10)
-			indice.append(nb+11)
-			indice.append(nb+11)
-			indice.append(nb+6)
+# def color_Hex(i, j, i_size, vertices) :
+# 	nb = 12*(j*i_size + i)
+# 	sides = (
+# 	(nb + 0, nb + 1, nb + 7, nb + 6),
+# 	(nb + 1, nb + 2, nb + 8, nb + 7),
+# 	(nb + 2, nb + 3, nb + 9, nb + 8),
+# 	(nb + 3, nb + 4, nb + 10, nb + 9),
+# 	(nb + 4, nb + 5, nb + 11, nb + 10),
+# 	(nb + 5, nb + 0, nb + 6, nb + 11),
+# 	(nb + 0, nb + 1, nb + 2, nb + 3, nb + 4, nb + 5),
+# 	(nb + 6, nb + 7, nb + 8, nb + 9, nb + 10, nb + 11)
+# 	)
 
-			indice.append(nb+0)
-			indice.append(nb+6)
-			indice.append(nb+1)
-			indice.append(nb+7)
-			indice.append(nb+2)
-			indice.append(nb+8)
-			indice.append(nb+3)
-			indice.append(nb+9)
-			indice.append(nb+4)
-			indice.append(nb+10)
-			indice.append(nb+5)
-			indice.append(nb+11)
-			nb+=12
-	return indice
-
-def color_Hex(i, j, i_size, vertices) :
-	nb = 12*(j*i_size + i)
-	sides = (
-	(nb + 0, nb + 1, nb + 7, nb + 6),
-	(nb + 1, nb + 2, nb + 8, nb + 7),
-	(nb + 2, nb + 3, nb + 9, nb + 8),
-	(nb + 3, nb + 4, nb + 10, nb + 9),
-	(nb + 4, nb + 5, nb + 11, nb + 10),
-	(nb + 5, nb + 0, nb + 6, nb + 11),
-	(nb + 0, nb + 1, nb + 2, nb + 3, nb + 4, nb + 5),
-	(nb + 6, nb + 7, nb + 8, nb + 9, nb + 10, nb + 11)
-	)
-
-	glBegin(GL_POLYGON)
-	for surface in sides :
-		for vertex in surface :
-			glVertex3fv((vertices[3*vertex], vertices[3*vertex + 1], vertices[3*vertex+2]))
-	glEnd()
+# 	glBegin(GL_POLYGON)
+# 	for surface in sides :
+# 		for vertex in surface :
+# 			glVertex3fv((vertices[3*vertex], vertices[3*vertex + 1], vertices[3*vertex+2]))
+# 	glEnd()
 
 def location_to_coord(loc) :
 	if not isinstance(loc, Location.Location) :
@@ -408,6 +398,109 @@ def location_to_coord(loc) :
 		z += m.cos(m.radians(30))
 	x = loc.getOrdonnee()*1.5
 	return (x,z)
+
+def point_central(i_size, j_size) :
+	(x, z) = location_to_coord(Location.Location(i_size, j_size))
+	x += 1
+	z += m.sqrt(3)/2
+	return (x/2, z/2)
+
+def add_vertices_according_to_y(vertices, y) :
+	racine_3_sur_2 = m.sqrt(3)/2
+	vertices.append(SIZE * 1)
+	vertices.append(SIZE * y)
+	vertices.append(SIZE * 0)
+	vertices.append(SIZE * 1/2)
+	vertices.append(SIZE * y)
+	vertices.append(SIZE * racine_3_sur_2)
+	vertices.append(SIZE * -1/2)
+	vertices.append(SIZE * y)
+	vertices.append(SIZE * racine_3_sur_2)
+	vertices.append(SIZE * -1)
+	vertices.append(SIZE * y)
+	vertices.append(SIZE * 0)
+	vertices.append(SIZE * -1/2)
+	vertices.append(SIZE * y)
+	vertices.append(SIZE * -racine_3_sur_2)
+	vertices.append(SIZE * 1/2)
+	vertices.append(SIZE * y)
+	vertices.append(SIZE * -racine_3_sur_2)
+
+def one_hex_indices_edges_generator() :
+	indice = list()
+	indice.append(0)
+	indice.append(1)
+	indice.append(1)
+	indice.append(2)
+	indice.append(2)
+	indice.append(3)
+	indice.append(3)
+	indice.append(4)
+	indice.append(4)
+	indice.append(5)
+	indice.append(5)
+	indice.append(0)
+
+	indice.append(6)
+	indice.append(7)
+	indice.append(7)
+	indice.append(8)
+	indice.append(8)
+	indice.append(9)
+	indice.append(9)
+	indice.append(10)
+	indice.append(10)
+	indice.append(11)
+	indice.append(11)
+	indice.append(6)
+
+	indice.append(0)
+	indice.append(6)
+	indice.append(1)
+	indice.append(7)
+	indice.append(2)
+	indice.append(8)
+	indice.append(3)
+	indice.append(9)
+	indice.append(4)
+	indice.append(10)
+	indice.append(5)
+	indice.append(11)
+
+	return indice
+			
+
+def draw_hex(color_lines, color_sides, bottom_y, top_y) :
+	vertices = list()
+	nb_vertices = 12
+	add_vertices_according_to_y(vertices, bottom_y)
+	add_vertices_according_to_y(vertices, top_y)
+
+	sides = (
+	(0, 1, 7, 6),
+	(1, 2, 8, 7),
+	(2, 3, 9, 8),
+	(3, 4, 10, 9),
+	(4, 5, 11, 10),
+	(5, 0, 6, 11),
+	(0, 1, 2, 3, 4, 5),
+	(6, 7, 8, 9, 10, 11)
+	)
+
+	#draw_lines
+	glColor3fv(color_lines)
+	glEnableClientState(GL_VERTEX_ARRAY)
+	glVertexPointer(3, GL_FLOAT, 0, vertices)
+	glDrawElements(GL_LINES, nb_vertices*3, GL_UNSIGNED_INT, one_hex_indices_edges_generator())
+	glDisableClientState(GL_VERTEX_ARRAY)
+
+	#draw_sides
+	glColor3fv(color_sides)
+	glBegin(GL_POLYGON)
+	for surface in sides :
+		for vertex in surface :
+			glVertex3fv((vertices[3*vertex], vertices[3*vertex + 1], vertices[3*vertex+2]))
+	glEnd()
 	
 def run() :
 	pygame.init()
@@ -420,28 +513,30 @@ def run() :
 	glRotatef(90, 0, 1, 0)
 	glTranslatef(40, 5, 0)
 	glRotatef(60, 0, 0, 1)
-	#glRotatef(70, 1, 0, 0)
-	glColor3fv(grey_shiny)
 
 	size_i = 25
 	size_j = 25
-	nb_vertices = size_j*size_i*12
-	vertices = vertices_generator(size_i, size_j, 0, 0.5)
-	indice_edges = indices_edges_generator(size_i, size_j)
+	bottom_y = 0
+	top_y = 0.5
+	color_lines = (90/256, 80/256, 50/256)
+	color_sides = (180/256, 140/256, 100/256)
 
-	display_edges_list = glGenLists(1)
-	glNewList(display_edges_list, GL_COMPILE)
-	glEnableClientState(GL_VERTEX_ARRAY)
-	glVertexPointer(3, GL_FLOAT, 0, vertices)
-	glDrawElements(GL_LINES, nb_vertices*3, GL_UNSIGNED_INT, indice_edges)
-	glDisableClientState(GL_VERTEX_ARRAY)
+	display_list_one_hex = glGenLists(1)
+	glNewList(display_list_one_hex, GL_COMPILE)
+	draw_hex(color_lines, color_sides, bottom_y, top_y)
 	glEndList()
 
-	display_hex_list = glGenLists(1)
-	glNewList(display_hex_list, GL_COMPILE)
+	display_list_map = glGenLists(1)
+	glNewList(display_list_map, GL_COMPILE)
+	(central_x, central_z) = point_central(size_i, size_j)
+	glTranslatef(-central_x, 0, -central_z)
 	for j in range(size_j) :
 		for i in range(size_i) :
-			color_Hex(i, j, size_i, vertices)
+			(x, z) = location_to_coord(Location.Location(i, j))
+			glTranslatef(x, 0, z)
+			glCallList(display_list_one_hex)
+			glTranslatef(-x, 0, -z)
+	glTranslatef(central_x, 0, central_z)
 	glEndList()
 
 	while True:
@@ -459,21 +554,9 @@ def run() :
 				else :
 					glRotatef(-180*mouvement_ratio_horizontal, 0, 1, 0)
 
-			# if event.type == pygame.MOUSEBUTTONDOWN :
-			# 	if event.button == 4 :
-			# 		glTranslatef(0, 1, 0)
-			# 	if event.button == 5 :
-			# 		glTranslatef(0, -1, 0)
-
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-		glColor3fv((180/256, 140/256, 100/256))
-		glCallList(display_hex_list)
-		glColor3fv((0.34, 0.31, 0.22))
-		glCallList(display_edges_list)
-		glTranslatef(0, 2, 0)
-		glCallList(display_edges_list)
-		glTranslatef(0, -2, 0)
+		glCallList(display_list_map)
 
 		pygame.display.flip()
 		pygame.time.wait(10)
@@ -482,6 +565,7 @@ def run() :
 		fps = int(round(1/(end - start)))
 		pygame.display.set_caption("hex_map" + ": " + str(fps))
 
-	glDeleteLists(list, 1)
+	glDeleteLists(display_list_one_hex, 1)
+	glDeleteLists(display_list_map, 1)
 
 run()
