@@ -111,6 +111,8 @@ class Sight :
 		if not isinstance(M, Map) :
 			raise Exception("M isn't a Map")
 
+		self.init_fieldOfView()
+
 		for i in range(self.getSizeX()) :
 			for j in range(self.getSizeY()) :
 				k = 0
@@ -121,6 +123,11 @@ class Sight :
 						self.setSightCell(Location(i,j), False)
 						break
 					k += 1
+
+	def init_fieldOfView(self) :
+		for i in range(self.getSizeX()) :
+			for j in range(self.getSizeY()) :
+				self.setSightCell(Location(i, j), True)
 
 	def string(self, Loc, M) :
 		s = ""

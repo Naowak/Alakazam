@@ -13,382 +13,89 @@ import array
 
 import Location
 import Map
-
-# class Angle(Enum) :
-# 	left = 0
-# 	top_left = 1
-# 	top_right = 2
-# 	right = 3
-# 	bottom_right = 4
-# 	bottom_left = 5
+import Sight
 
 SIZE = 1
 
+class Display_list_color_click_array() :
+	def __init__(self, i_size, j_size, bottom_y, top_y, map_data) :
+		if not isinstance(i_size, int) :
+			raise Exception("TYPE ERROR : i isn't an int")
+		if not isinstance(j_size, int) :
+			raise Exception("TYPE ERROR : j isn't an int")
 
+		self.array = list()
+		self.map_data = map_data
+		self.i_size = i_size
+		self.j_size = j_size
+		self.bottom_y = bottom_y
+		self.top_y = top_y
 
-# def new_vertices(i, j, angle) :
-# 	y_BOTTOM = 0
-# 	y_TOP = 0.5
+		for i in range(i_size) :
+			self.array.append(list())
+			for j in range(j_size) :
+				self.array[i].append(None)
 
-# 	if angle == Angle.left :
-# 		return (SIZE * (i + -1), SIZE * y_BOTTOM, SIZE * (j + 0))
-# 	elif angle == Angle.top_left :
-# 		return (SIZE * (i + -1/2), SIZE * y_BOTTOM, SIZE * (j + m.sqrt(3)/2))
-# 	elif angle == Angle.top_right :
-# 		return (SIZE * (i + 1/2), SIZE * y_BOTTOM, SIZE * (j + m.sqrt(3)/2))
-# 	elif angle == Angle.right :
-# 		return (SIZE * (i + 1), SIZE * y_BOTTOM, SIZE * (j + 0))
-# 	elif angle == Angle.bottom_right :
-# 		return (SIZE * (i + 1/2), SIZE * y_BOTTOM, SIZE * (j + -m.sqrt(3)/2))
-# 	elif angle == Angle.bottom_left :
-# 		return (SIZE * (i + -1/2), SIZE * y_BOTTOM, SIZE * (j + -m.sqrt(3)/2))
+	def get_i_size(self) :
+		return self.i_size
 
-# def line_top(i, j, i_size) :
-# 	return j*(2*i_size + 2) + 2*i
+	def get_j_size(self) :
+		return self.j_size
 
-# def line_bot(i, j, i_size) :
-# 	return (j+1)*(2*i_size + 2) + 2*i
+	def get_map_data(self) :
+		return self.map_data
 
-# def vertex_number(i, j, i_size, angle) :
-# 	if angle == Angle.left :
-# 		return line_top(i, j, i_size) + (-1 if j!=0 and j%2==0 else 0)
-# 	elif angle == Angle.top_left :
-# 		return line_top(i, j, i_size) + (0 if j!=0 and j%2==0 else 1)
-# 	elif angle == Angle.top_right :
-# 		return line_top(i, j, i_size) + (1 if j!=0 and j%2==0 else 2)
-# 	elif angle == Angle.right :
-# 		return line_bot(i, j, i_size) + (1 if j%2==0 else 2)
-# 	elif angle == Angle.bottom_right :
-# 		return line_bot(i, j, i_size) + (0 if j%2==0 else 1)
-# 	elif angle == Angle.bottom_left :
-# 		return line_bot(i, j, i_size) + (-1 if j%2==0 else 0)
+	def set_display_list(self, i, j, display_list) :
+		if not isinstance(i, int) :
+			raise Exception("TYPE ERROR : i isn't an int")
+		if not isinstance(j, int) :
+			raise Exception("TYPE ERROR : j isn't an int")
+		self.array[i][j] = display_list
 
-# def HexGrid3D(i_size, j_size) :
-# 	vertices = list()
-# 	nb_vertices = (2*i_size + 2) * (j_size+1) - 2
-# 	for i in range(nb_vertices) :
-# 		vertices += [0]
-# 	edges = list()
-# 	cells = list()
+	def get_display_list(self, loc) :
+		i = loc.getAbscisse()
+		j = loc.getOrdonnee()
+		return self.array[i][j]
 
-# 	for j in range(j_size) :
-# 		if j == 0 :
-# 			for i in range(i_size) :
-# 				(pos_x, pos_z) = location_to_coord(Location.Location(i,j))
-# 				if i == 0 :
-# 					vertices[vertex_number(i, j, i_size, Angle.left)] = new_vertices(pos_x, pos_z, Angle.left)
-# 					vertices[vertex_number(i, j, i_size, Angle.top_left)] = new_vertices(pos_x, pos_z, Angle.top_left)
-# 					vertices[vertex_number(i, j, i_size, Angle.top_right)] = new_vertices(pos_x, pos_z, Angle.top_right)
-# 					vertices[vertex_number(i, j, i_size, Angle.right)] = new_vertices(pos_x, pos_z, Angle.right)
-# 					vertices[vertex_number(i, j, i_size, Angle.bottom_right)] = new_vertices(pos_x, pos_z, Angle.bottom_right)
-# 					vertices[vertex_number(i, j, i_size, Angle.bottom_left)] = new_vertices(pos_x, pos_z, Angle.bottom_left)
+	def create_display_list(self, i, j) :
+		loc = Location.Location(i, j)
+		if self.get_map_data().getCellType(loc) == "Empty" :
+			self.set_display_list(i, j, glGenLists(1))
+			glNewList(self.get_display_list(loc), GL_COMPILE)
+			color = loc_to_color(loc)
+			draw_hex(color, color, self.bottom_y, self.top_y)
+			glEndList()
+		elif self.get_map_data().getCellType(loc) == "Taken" :
+			self.set_display_list(i, j, glGenLists(1))
+			glNewList(self.get_display_list(loc), GL_COMPILE)
+			color = loc_to_color(loc)
+			draw_hex(color, color, self.bottom_y, self.top_y)
+			glEndList()
+		elif self.get_map_data().getCellType(loc) == "Full" :
+			self.set_display_list(i, j, glGenLists(1))
+			glNewList(self.get_display_list(loc), GL_COMPILE)
+			color = loc_to_color(loc)
+			draw_hex(color, color, self.bottom_y, self.top_y)
+			draw_hex(color, color, self.top_y, self.top_y*2)
+			glEndList()
+		elif self.get_map_data().getCellType(loc) == "Hole" :
+			pass
 
-# 					cells.append((vertex_number(i, j, i_size, Angle.left), 
-# 						vertex_number(i, j, i_size, Angle.top_left), 
-# 						vertex_number(i, j, i_size, Angle.top_right), 
-# 						vertex_number(i, j, i_size, Angle.right), 
-# 						vertex_number(i, j, i_size, Angle.bottom_right), 
-# 						vertex_number(i, j, i_size, Angle.bottom_left)))
+	def create_all_display_list(self) :
+		for i in range(self.get_i_size()) :
+			for j in range(self.get_j_size()) :
+				self.create_display_list(i, j)
 
-# 					edges.append((vertex_number(i, j, i_size, Angle.left),vertex_number(i, j, i_size, Angle.top_left)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.top_left),vertex_number(i, j, i_size, Angle.top_right)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.top_right),vertex_number(i, j, i_size, Angle.right)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.right),vertex_number(i, j, i_size, Angle.bottom_right)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.bottom_right),vertex_number(i, j, i_size, Angle.bottom_left)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.bottom_left),vertex_number(i, j, i_size, Angle.left)))
+	def delete_display_list(self, i, j) :
+		glDeleteLists(get_display_list(i, j), 1)
 
-# 				else :
-# 					vertices[vertex_number(i, j, i_size, Angle.top_left)] = new_vertices(pos_x, pos_z, Angle.top_left)
-# 					vertices[vertex_number(i, j, i_size, Angle.top_right)] = new_vertices(pos_x, pos_z, Angle.top_right)
-# 					vertices[vertex_number(i, j, i_size, Angle.right)] = new_vertices(pos_x, pos_z, Angle.right)
-# 					vertices[vertex_number(i, j, i_size, Angle.bottom_right)] = new_vertices(pos_x, pos_z, Angle.bottom_right)
-
-# 					cells.append((vertex_number(i, j, i_size, Angle.left), 
-# 						vertex_number(i, j, i_size, Angle.top_left), 
-# 						vertex_number(i, j, i_size, Angle.top_right), 
-# 						vertex_number(i, j, i_size, Angle.right), 
-# 						vertex_number(i, j, i_size, Angle.bottom_right), 
-# 						vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 					edges.append((vertex_number(i, j, i_size, Angle.left), vertex_number(i, j, i_size, Angle.top_left)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.top_left), vertex_number(i, j, i_size, Angle.top_right)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.top_right), vertex_number(i, j, i_size, Angle.right)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.right), vertex_number(i, j, i_size, Angle.bottom_right)))
-# 					edges.append((vertex_number(i, j, i_size, Angle.bottom_right), vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 		else :
-# 			for i in range(i_size) :
-# 				(pos_x, pos_z) = location_to_coord(Location.Location(i,j))
-# 				if i == 0 :
-# 					if j % 2 == 0 :
-# 						vertices[vertex_number(i, j, i_size, Angle.left)] = new_vertices(pos_x, pos_z, Angle.left)
-# 						vertices[vertex_number(i, j, i_size, Angle.right)] = new_vertices(pos_x, pos_z, Angle.right)
-# 						vertices[vertex_number(i, j, i_size, Angle.bottom_right)] = new_vertices(pos_x, pos_z, Angle.bottom_right)
-# 						vertices[vertex_number(i, j, i_size, Angle.bottom_left)] = new_vertices(pos_x, pos_z, Angle.bottom_left)
-
-# 						cells.append((vertex_number(i, j, i_size, Angle.left), 
-# 							vertex_number(i, j, i_size, Angle.top_left), 
-# 							vertex_number(i, j, i_size, Angle.top_right), 
-# 							vertex_number(i, j, i_size, Angle.right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 						edges.append((vertex_number(i, j, i_size, Angle.left),vertex_number(i, j, i_size, Angle.top_left)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.top_right),vertex_number(i, j, i_size, Angle.right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.right),vertex_number(i, j, i_size, Angle.bottom_right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.bottom_right),vertex_number(i, j, i_size, Angle.bottom_left)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.bottom_left),vertex_number(i, j, i_size, Angle.left)))
-
-# 					else :
-# 						vertices[vertex_number(i, j, i_size, Angle.right)] = new_vertices(pos_x, pos_z, Angle.right)
-# 						vertices[vertex_number(i, j, i_size, Angle.bottom_right)] = new_vertices(pos_x, pos_z, Angle.bottom_right)
-# 						vertices[vertex_number(i, j, i_size, Angle.bottom_left)] = new_vertices(pos_x, pos_z, Angle.bottom_left)
-
-# 						cells.append((vertex_number(i, j, i_size, Angle.left), 
-# 							vertex_number(i, j, i_size, Angle.top_left), 
-# 							vertex_number(i, j, i_size, Angle.top_right), 
-# 							vertex_number(i, j, i_size, Angle.right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 						edges.append((vertex_number(i, j, i_size, Angle.top_right),vertex_number(i, j, i_size, Angle.right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.right),vertex_number(i, j, i_size, Angle.bottom_right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.bottom_right),vertex_number(i, j, i_size, Angle.bottom_left)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.bottom_left),vertex_number(i, j, i_size, Angle.left)))
-# 				else :
-# 					if i == i_size - 1 and j % 2 != 0 :
-# 						vertices[vertex_number(i, j, i_size, Angle.top_right)] = new_vertices(pos_x, pos_z, Angle.top_right)
-# 						vertices[vertex_number(i, j, i_size, Angle.right)] = new_vertices(pos_x, pos_z, Angle.right)
-# 						vertices[vertex_number(i, j, i_size, Angle.bottom_right)] = new_vertices(pos_x, pos_z, Angle.bottom_right)
-
-# 						cells.append((vertex_number(i, j, i_size, Angle.left), 
-# 							vertex_number(i, j, i_size, Angle.top_left), 
-# 							vertex_number(i, j, i_size, Angle.top_right), 
-# 							vertex_number(i, j, i_size, Angle.right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 						edges.append((vertex_number(i, j, i_size, Angle.top_left),vertex_number(i, j, i_size, Angle.top_right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.top_right),vertex_number(i, j, i_size, Angle.right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.right),vertex_number(i, j, i_size, Angle.bottom_right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.bottom_right),vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 					else :
-# 						vertices[vertex_number(i, j, i_size, Angle.right)] = new_vertices(pos_x, pos_z, Angle.right)
-# 						vertices[vertex_number(i, j, i_size, Angle.bottom_right)] = new_vertices(pos_x, pos_z, Angle.bottom_right)
-
-# 						cells.append((vertex_number(i, j, i_size, Angle.left), 
-# 							vertex_number(i, j, i_size, Angle.top_left), 
-# 							vertex_number(i, j, i_size, Angle.top_right), 
-# 							vertex_number(i, j, i_size, Angle.right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_right), 
-# 							vertex_number(i, j, i_size, Angle.bottom_left)))
-
-# 						edges.append((vertex_number(i, j, i_size, Angle.top_right),vertex_number(i, j, i_size, Angle.right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.right),vertex_number(i, j, i_size, Angle.bottom_right)))
-# 						edges.append((vertex_number(i, j, i_size, Angle.bottom_right),vertex_number(i, j, i_size, Angle.bottom_left)))
-
-
-# 	for cell in cells :
-# 		glBegin(GL_POLYGON)
-# 		glColor3fv(grey_dark)
-# 		for vertex in cell :
-# 			glVertex3fv(vertices[vertex])
-# 		glEnd()
-
-# 	for edge in edges :
-# 		glBegin(GL_LINES)
-# 		glColor3fv(grey_shiny)
-# 		for vertex in edge :
-# 			glVertex3fv(vertices[vertex])
-# 		glEnd()
+	def delete_all_display_list(self) :
+		for i in range(get_i_size()) :
+			for j in range(get_j_size()) :
+				delete_display_list(i, j)
 
 
 
-# edges = (
-# 		(0,1),(1,2),(2,3),(3,4),(4,5),(5,0),
-# 		(6,7),(7,8),(8,9),(9,10),(10,11),(11,6),
-# 		(0,6),(1,7),(2,8),(3,9),(4,10),(5,11)
-# 		)
-
-# sides = (
-# 	(0, 1, 7, 6),
-# 	(1, 2, 8, 7),
-# 	(2, 3, 9, 8),
-# 	(3, 4, 10, 9),
-# 	(4, 5, 11, 10),
-# 	(5, 0, 6, 11),
-# 	(0, 1, 2, 3, 4, 5),
-# 	(6, 7, 8, 9, 10, 11)
-# 	)
-
-
-# def Hex3D(x, y_BOTTOM, y_TOP, z) :
-
-# 	vertices = (
-# 	(SIZE * (x + 1), SIZE * y_BOTTOM, SIZE * (z + 0)),
-# 	(SIZE * (x + 1/2), SIZE * y_BOTTOM, SIZE * (z + m.sqrt(3)/2)),
-# 	(SIZE * (x + -1/2), SIZE * y_BOTTOM, SIZE * (z + m.sqrt(3)/2)),
-# 	(SIZE * (x + -1), SIZE * y_BOTTOM, SIZE * (z + 0)),
-# 	(SIZE * (x + -1/2), SIZE * y_BOTTOM, SIZE * (z + -m.sqrt(3)/2)),
-# 	(SIZE * (x + 1/2), SIZE * y_BOTTOM, SIZE * (z + -m.sqrt(3)/2)),
-
-# 	(SIZE * (x + 1), SIZE * y_TOP, SIZE * (z + 0)),
-# 	(SIZE * (x + 1/2), SIZE * y_TOP, SIZE * (z + m.sqrt(3)/2)),
-# 	(SIZE * (x + -1/2), SIZE * y_TOP, SIZE * (z + m.sqrt(3)/2)),
-# 	(SIZE * (x + -1), SIZE * y_TOP, SIZE * (z + 0)),
-# 	(SIZE * (x + -1/2), SIZE * y_TOP, SIZE * (z + -m.sqrt(3)/2)),
-# 	(SIZE * (x + 1/2), SIZE * y_TOP, SIZE * (z + -m.sqrt(3)/2))
-# 	)
-
-# 	# glColor3fv(grey_dark)
-# 	# for surface in sides :
-# 	# 	glBegin(GL_POLYGON)
-# 	# 	for vertex in surface :
-# 	# 		glVertex3fv(vertices[vertex])
-# 	# 	glEnd()
-
-# 	for edge in edges :
-# 		for vertex in edge :
-# 			glVertex3fv(vertices[vertex])
-
-# def vertices_generator(i_size, j_size, high_min, high_max) :
-# 	vertices = list()
-# 	racine_3_sur_2 = m.sqrt(3)/2
-# 	(x_center, z_center) = point_central(i_size, j_size)
-# 	for j in range(j_size) :
-# 		for i in range(i_size) :
-# 			(x, z) = location_to_coord(Location.Location(i, j))
-
-# 			vertices.append(SIZE * (-x_center + x + 1))
-# 			vertices.append(SIZE * high_min)
-# 			vertices.append(SIZE * (-z_center + z + 0))
-# 			vertices.append(SIZE * (-x_center + x + 1/2))
-# 			vertices.append(SIZE * high_min)
-# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-# 			vertices.append(SIZE * (-x_center + x + -1/2))
-# 			vertices.append(SIZE * high_min)
-# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-# 			vertices.append(SIZE * (-x_center + x + -1))
-# 			vertices.append(SIZE * high_min)
-# 			vertices.append(SIZE * (-z_center + z + 0))
-# 			vertices.append(SIZE * (-x_center + x + -1/2))
-# 			vertices.append(SIZE * high_min)
-# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-# 			vertices.append(SIZE * (-x_center + x + 1/2))
-# 			vertices.append(SIZE * high_min)
-# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-
-# 			vertices.append(SIZE * (-x_center + x + 1))
-# 			vertices.append(SIZE * high_max)
-# 			vertices.append(SIZE * (-z_center + z + 0))
-# 			vertices.append(SIZE * (-x_center + x + 1/2))
-# 			vertices.append(SIZE * high_max)
-# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-# 			vertices.append(SIZE * (-x_center + x + -1/2))
-# 			vertices.append(SIZE * high_max)
-# 			vertices.append(SIZE * (-z_center + z + racine_3_sur_2))
-# 			vertices.append(SIZE * (-x_center + x + -1))
-# 			vertices.append(SIZE * high_max)
-# 			vertices.append(SIZE * (-z_center + z + 0))
-# 			vertices.append(SIZE * (-x_center + x + -1/2))
-# 			vertices.append(SIZE * high_max)
-# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-# 			vertices.append(SIZE * (-x_center + x + 1/2)) 
-# 			vertices.append(SIZE * high_max)
-# 			vertices.append(SIZE * (-z_center + z + -racine_3_sur_2))
-# 	return vertices
-
-# def indices_hex_bot_generator(indice, nb) :
-# 	indice.append(nb+0)
-# 	indice.append(nb+1)
-# 	indice.append(nb+2)
-# 	indice.append(nb+3)
-# 	indice.append(nb+4)
-# 	indice.append(nb+5)
-
-# def indices_hex_top_generator(indice, nb) :
-# 	indice.append(nb+6)
-# 	indice.append(nb+7)
-# 	indice.append(nb+8)
-# 	indice.append(nb+9)
-# 	indice.append(nb+10)
-# 	indice.append(nb+11)
-
-# def indices_hex_generator(i_size, j_size) :
-# 	indice = list()
-# 	nb = 0
-# 	for j in range(j_size) :
-# 		for i in range(i_size) :
-# 			indices_hex_bot_generator(indice, nb)
-# 			indices_hex_top_generator(indice, nb)
-# 			nb += 12
-# 	return indice
-
-# def indices_edges_generator(i_size, j_size) :
-# 	indice = list()
-# 	nb = 0
-# 	for j in range(j_size) :
-# 		for i in range(i_size) :
-# 			indice.append(nb+0)
-# 			indice.append(nb+1)
-# 			indice.append(nb+1)
-# 			indice.append(nb+2)
-# 			indice.append(nb+2)
-# 			indice.append(nb+3)
-# 			indice.append(nb+3)
-# 			indice.append(nb+4)
-# 			indice.append(nb+4)
-# 			indice.append(nb+5)
-# 			indice.append(nb+5)
-# 			indice.append(nb+0)
-
-# 			indice.append(nb+6)
-# 			indice.append(nb+7)
-# 			indice.append(nb+7)
-# 			indice.append(nb+8)
-# 			indice.append(nb+8)
-# 			indice.append(nb+9)
-# 			indice.append(nb+9)
-# 			indice.append(nb+10)
-# 			indice.append(nb+10)
-# 			indice.append(nb+11)
-# 			indice.append(nb+11)
-# 			indice.append(nb+6)
-
-# 			indice.append(nb+0)
-# 			indice.append(nb+6)
-# 			indice.append(nb+1)
-# 			indice.append(nb+7)
-# 			indice.append(nb+2)
-# 			indice.append(nb+8)
-# 			indice.append(nb+3)
-# 			indice.append(nb+9)
-# 			indice.append(nb+4)
-# 			indice.append(nb+10)
-# 			indice.append(nb+5)
-# 			indice.append(nb+11)
-# 			nb+=12
-# 	return indice
-
-# def color_Hex(i, j, i_size, vertices) :
-# 	nb = 12*(j*i_size + i)
-# 	sides = (
-# 	(nb + 0, nb + 1, nb + 7, nb + 6),
-# 	(nb + 1, nb + 2, nb + 8, nb + 7),
-# 	(nb + 2, nb + 3, nb + 9, nb + 8),
-# 	(nb + 3, nb + 4, nb + 10, nb + 9),
-# 	(nb + 4, nb + 5, nb + 11, nb + 10),
-# 	(nb + 5, nb + 0, nb + 6, nb + 11),
-# 	(nb + 0, nb + 1, nb + 2, nb + 3, nb + 4, nb + 5),
-# 	(nb + 6, nb + 7, nb + 8, nb + 9, nb + 10, nb + 11)
-# 	)
-
-# 	glBegin(GL_POLYGON)
-# 	for surface in sides :
-# 		for vertex in surface :
-# 			glVertex3fv((vertices[3*vertex], vertices[3*vertex + 1], vertices[3*vertex+2]))
-# 	glEnd()
 
 def location_to_coord(loc) :
 	if not isinstance(loc, Location.Location) :
@@ -503,12 +210,19 @@ def draw_hex(color_lines, color_sides, bottom_y, top_y) :
 		for vertex in surface :
 			glVertex3fv((vertices[3*vertex], vertices[3*vertex + 1], vertices[3*vertex+2]))
 	glEnd()
+
+def loc_to_color(loc) :
+	return ((loc.getAbscisse()+1)/256, (loc.getOrdonnee()+1)/256, 0)
+
+def color_array_to_loc(color_array) :
+	return Location.Location((int) (color_array[0][0][0]*256) - 1, (int) (color_array[0][0][1]*256) - 1)
+
 	
 def run() :
 	pygame.init()
 	information_screen = pygame.display.Info()
 	display = (information_screen.current_w, information_screen.current_h)
-	pygame.display.set_mode(display, FULLSCREEN|DOUBLEBUF|OPENGL)
+	pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 
 	glEnable(GL_DEPTH_TEST)
 	gluPerspective(70, (display[0]/display[1]), 0.1, 200)
@@ -523,11 +237,14 @@ def run() :
 	top_y = 0.5
 	color_lines = (60/256, 60/256, 60/256)
 	color_sides_empty = (170/256, 160/256, 150/256)
+	color_sides_visible = (60/256, 60/256, 120/256)
+	color_sides_click = (60/256, 60/256, 180/256)
 	color_sides_full = (120/256, 110/256, 100/256)
 
 	#map_data_init
 	map_data = Map.Map(size_i, size_j)
 	map_data.generationRelief()
+	sight = Sight.Sight(size_i, size_j)
 
 	#empty_hex
 	display_list_empty_hex = glGenLists(1)
@@ -538,8 +255,20 @@ def run() :
 	#full_hex
 	display_list_full_hex = glGenLists(1)
 	glNewList(display_list_full_hex, GL_COMPILE)
-	draw_hex(color_lines, color_sides_full, bottom_y, top_y)
+	draw_hex(color_lines, color_sides_empty, bottom_y, top_y)
 	draw_hex(color_lines, color_sides_full, top_y, top_y*2)
+	glEndList()
+
+	#hex_visible
+	display_list_visible_hex = glGenLists(1)
+	glNewList(display_list_visible_hex, GL_COMPILE)
+	draw_hex(color_lines, color_sides_visible, bottom_y, top_y)
+	glEndList()
+
+	#hex_click
+	display_list_click_hex = glGenLists(1)
+	glNewList(display_list_visible_hex, GL_COMPILE)
+	draw_hex(color_lines, color_sides_click, bottom_y, top_y)
 	glEndList()
 
 	#all_hex
@@ -565,8 +294,34 @@ def run() :
 	glTranslatef(central_x, 0, central_z)
 	glEndList()
 
+	#tab_display_list_one_hex_color
+	tab_display_list_one_hex_color = Display_list_color_click_array(size_i, size_j, bottom_y, top_y, map_data)
+	tab_display_list_one_hex_color.create_all_display_list()
+
+	#all_hex_color_click
+	display_list_all_hex_color_click = glGenLists(1)
+	glNewList(display_list_all_hex_color_click, GL_COMPILE)
+	(central_x, central_z) = point_central(size_i, size_j)
+	glTranslatef(-central_x, 0, -central_z)
+	for j in range(size_j) :
+		for i in range(size_i) :
+			loc = Location.Location(i, j)
+			cell_type = map_data.getCellType(loc)
+			if cell_type != "Hole" :
+				(x, z) = location_to_coord(loc)
+				glTranslatef(x, 0, z)
+				glCallList(tab_display_list_one_hex_color.get_display_list(loc))
+				glTranslatef(-x, 0, -z)
+	glTranslatef(central_x, 0, central_z)
+	glEndList()
+
+	loc_click = Location.Location(-1, -1)
+
 	while True:
 		start = time.time()
+
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+		glCallList(display_list_all_hex_color_click)
 
 		for event in pygame.event.get() :
 			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE) :
@@ -580,9 +335,47 @@ def run() :
 				else :
 					glRotatef(-180*mouvement_ratio_horizontal, 0, 1, 0)
 
+			if event.type == MOUSEBUTTONUP and event.button == 1 :
+				color_array = glReadPixels(event.pos[0], information_screen.current_h - event.pos[1], 1, 1, GL_RGB, GL_FLOAT)
+				loc_click = color_array_to_loc(color_array)
+				try :
+					sight.fieldOfView(loc_click, map_data)
+				except Exception :
+					pass
+
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-		glCallList(display_list_map)
+		if loc_click.equals(Location.Location(-1, -1)) :
+			glCallList(display_list_map)
+		else :
+			(central_x, central_z) = point_central(size_i, size_j)
+			glTranslatef(-central_x, 0, -central_z)
+			for j in range(size_j) :
+				for i in range(size_i) :
+					loc = Location.Location(i, j)
+					cell_type = map_data.getCellType(loc)
+					(x, z) = location_to_coord(loc)
+					glTranslatef(x, 0, z)
+					if loc == loc_click :
+						if cell_type == "Empty" or cell_type == "Taken" :
+							glCallList(display_list_click_hex)
+					else :
+						if cell_type == "Empty" :
+							if sight.getSightCell(loc) == True :
+								glCallList(display_list_visible_hex)
+							else :
+								glCallList(display_list_empty_hex)
+						elif cell_type == "Taken" :
+							if sight.getSightCell(loc) == True :
+								glCallList(display_list_visible_hex)
+							else :
+								glCallList(display_list_empty_hex)
+						elif cell_type == "Full" :
+							glCallList(display_list_full_hex)
+						elif cell_type == "Hole" :
+						 	pass
+					glTranslatef(-x, 0, -z)
+			glTranslatef(central_x, 0, central_z)
 
 		pygame.display.flip()
 		pygame.time.wait(10)
